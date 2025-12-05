@@ -1,0 +1,70 @@
+{
+  "compilerOptions": {
+    // ═══════════════════════════════════════════════════════════
+    // Language & Environment
+    // ═══════════════════════════════════════════════════════════
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+
+    // ═══════════════════════════════════════════════════════════
+    // Modules
+    // ═══════════════════════════════════════════════════════════
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+
+    // ═══════════════════════════════════════════════════════════
+    // Emit
+    // ═══════════════════════════════════════════════════════════
+    "noEmit": true,
+    "isolatedModules": true,
+
+    // ═══════════════════════════════════════════════════════════
+    // Type Checking
+    // ═══════════════════════════════════════════════════════════
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+
+    // ═══════════════════════════════════════════════════════════
+    // Interop Constraints
+    // ═══════════════════════════════════════════════════════════
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // ═══════════════════════════════════════════════════════════
+    // Skip Lib Check for Faster Builds
+    // ═══════════════════════════════════════════════════════════
+    "skipLibCheck": true,
+
+    // ═══════════════════════════════════════════════════════════
+    // Path Aliases (match vite.config.ts)
+    // ═══════════════════════════════════════════════════════════
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/shared/components/*"],
+      "@features/*": ["./src/features/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@utils/*": ["./src/shared/utils/*"],
+      "@hooks/*": ["./src/shared/hooks/*"],
+      "@api/*": ["./src/shared/api/*"]
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // Advanced Options
+    // ═══════════════════════════════════════════════════════════
+    "useDefineForClassFields": true
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // Include / Exclude
+  // ═══════════════════════════════════════════════════════════
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "build"]
+}

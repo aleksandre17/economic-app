@@ -1,0 +1,36 @@
+/* ═══════════════════════════════════════════════════════════
+   Step Navigation Buttons (Back/Next)
+   ═══════════════════════════════════════════════════════════ */
+
+.container {
+    width: 100%;
+    margin-top: var(--spacing-xl);
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* When only Next button (first step) */
+.buttons:has(button:only-child) {
+    justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Mobile Responsive
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .container {
+        margin-top: var(--spacing-lg);
+    }
+
+    .buttons {
+        gap: var(--spacing-sm);
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,30 @@
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../../../../features/auth/context/AuthContext.tsx';
+import styles from './ProtectedRoute.module.css';
+
+export const ProtectedRoute: React.FC = () => {
+    const { isAuthenticated, isLoading } = useAuth();
+
+    if (isLoading) {
+        return (
+            <div className={styles.loadingContainer}>
+                <div className={styles.spinner}>
+                    <svg className="animate-spin" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="4" strokeOpacity="0.25" />
+                        <path d="M44 24a20 20 0 01-20 20" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+                    </svg>
+                </div>
+                <p className={styles.loadingText}>იტვირთება...</p>
+            </div>
+        );
+    }
+
+    if (!isAuthenticated) {
+        return <Navigate to="/login" replace />;
+    }
+
+    return <Outlet />;
+};
+
+export default ProtectedRoute;

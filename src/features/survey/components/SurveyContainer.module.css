@@ -1,0 +1,199 @@
+/* ═══════════════════════════════════════════════════════════
+   Survey Container - Split Layout
+   ═══════════════════════════════════════════════════════════ */
+
+.surveyWrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Gradient Banner - Short & Compact
+   ═══════════════════════════════════════════════════════════ */
+
+.gradientBanner {
+    background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+    padding: var(--spacing-lg) 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle Pattern */
+.gradientBanner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.bannerContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-xl);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.bannerTitle {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: white;
+    /*margin-bottom: var(--spacing-xs);*/
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.bannerSubtitle {
+    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: var(--font-medium);
+    margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Controls Section - White Background
+   ═══════════════════════════════════════════════════════════ */
+
+.controlsSection {
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-primary);
+    padding: var(--spacing-lg) 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Container - Common
+   ═══════════════════════════════════════════════════════════ */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-xs);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Content Section
+   ═══════════════════════════════════════════════════════════ */
+
+.content {
+    flex: 1;
+    background: var(--bg-secondary);
+    padding: var(--spacing-lg) 0;
+}
+
+
+
+/* ═══════════════════════════════════════════════════════════
+   Loading State
+   ═══════════════════════════════════════════════════════════ */
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: var(--spacing-lg);
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--gray-200);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingText {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    font-weight: var(--font-medium);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Mobile Responsive
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+    .gradientBanner {
+        padding: var(--spacing-md) 0;
+    }
+
+    .bannerTitle {
+        font-size: var(--text-xl);
+    }
+
+    .bannerSubtitle {
+        font-size: var(--text-xs);
+    }
+
+    .controlsSection {
+        padding: var(--spacing-lg) 0;
+    }
+
+    .container {
+        padding: 0 var(--spacing-lg);
+        gap: var(--spacing-lg);
+    }
+
+    .content {
+        padding: var(--spacing-xl) 0;
+    }
+
+    .stepContent {
+        padding: var(--spacing-xl);
+    }
+}
+
+@media (max-width: 768px) {
+    .gradientBanner {
+        padding: var(--spacing-sm) 0;
+    }
+
+    .bannerContainer {
+        padding: 0 var(--spacing-md);
+    }
+
+    .bannerTitle {
+        font-size: var(--text-lg);
+    }
+
+    .bannerSubtitle {
+        font-size: 11px;
+    }
+
+    .controlsSection {
+        padding: var(--spacing-md) 0;
+    }
+
+    .container {
+        padding: 0 var(--spacing-md);
+        gap: var(--spacing-md);
+    }
+
+    .content {
+        padding: var(--spacing-lg) 0;
+    }
+
+    .stepContent {
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-md);
+    }
+}

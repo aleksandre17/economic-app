@@ -1,0 +1,124 @@
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    font-family: var(--font-sans);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    text-decoration: none;
+    white-space: nowrap;
+    position: relative;
+    line-height: 1;
+}
+
+.button span {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.button:focus-visible {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 2px;
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Variants */
+.primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.primary:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+}
+
+.secondary {
+    background-color: var(--color-secondary);
+    color: white;
+}
+
+.secondary:hover:not(:disabled) {
+    background-color: var(--color-secondary-hover);
+}
+
+.outline {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+}
+
+.outline:hover:not(:disabled) {
+    background-color: var(--bg-hover);
+    border-color: var(--border-secondary);
+}
+
+/* Sizes */
+.sm {
+    padding: 6px 12px;
+    font-size: var(--text-sm);
+    min-height: 32px;
+}
+
+.md {
+    padding: 8px 16px;
+    font-size: var(--text-base);
+    min-height: 38px;
+}
+
+.lg {
+    padding: 10px 20px;
+    font-size: var(--text-base);
+    min-height: 42px;
+}
+
+/* Full width */
+.fullWidth {
+    width: 100%;
+}
+
+/* Loading state */
+.loading {
+    position: relative;
+    color: transparent;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spinner 0.6s linear infinite;
+    color: white;
+}
+
+.loading.outline::after {
+    color: var(--text-primary);
+}
+
+@keyframes spinner {
+    to { transform: rotate(360deg); }
+}
+
+/* Icon alignment fix */
+.button svg {
+    flex-shrink: 0;
+    display: block;
+}

@@ -1,0 +1,18 @@
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: var(--spacing-lg);
+}
+
+.spinner {
+    color: var(--color-primary);
+}
+
+.loadingText {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    margin: 0;
+}

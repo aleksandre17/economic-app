@@ -1,0 +1,158 @@
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    margin-bottom: var(--spacing-xl);
+}
+
+.header h2 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.header p {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.questionSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-primary);
+}
+
+.questionLabel {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+}
+
+.required {
+    color: var(--color-error);
+}
+
+.radioGroup {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xs);
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.radioLabel:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--border-primary);
+}
+
+.radio {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.radioLabel span {
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    font-weight: var(--font-medium);
+}
+
+.countSection {
+    padding: var(--spacing-md);
+    background-color: rgba(59, 130, 246, 0.05);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--border-primary);
+}
+
+.divider {
+    height: 1px;
+    background-color: var(--border-primary);
+    margin: var(--spacing-md) 0;
+}
+
+.vacanciesSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-primary);
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+}
+
+.sectionHeader > div {
+    flex: 1;
+}
+
+.sectionHeader h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.sectionHeader p {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.sectionHeader button {
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+.tableSection {
+    /* table wrapper */
+}
+
+@media (max-width: 768px) {
+    .radioGroup {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .sectionHeader {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sectionHeader button {
+        width: 100%;
+        align-self: stretch;
+    }
+}
