@@ -1,8 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useAuth } from '../../../features/auth/context/AuthContext';
-import styles from './Header.module.css';
-import { TokenExpiryIndicator } from '../TokenExpiryIndicator/TokenExpiryIndicator.tsx';
+import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate} from "react-router-dom";
+import { useAuth } from '@features/auth/context/AuthContext.tsx';
+import { TokenExpiryIndicator } from '../TokenExpiryIndicator/TokenExpiryIndicator.tsx';
+
+import styles from './Header.module.css';
+import logo from '@assets/icon/economy-logo.png';
+import {STORAGE_KEY} from "@features/survey/context/surveyContext.tsx";
 
 export const Header: React.FC = () => {
     const { user, logout, isAuthenticated } = useAuth();
@@ -27,27 +30,60 @@ export const Header: React.FC = () => {
 
     const getInitials = (name: string) => {
         return name
-            // .split(' ')
-            // .map((n) => n[0])
-            // .join('')
-            // .toUpperCase()
-            // .slice(0, 2);
+            .split(' ')
+            .map((n) => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2);
     };
 
     const handleLogout = async () => {
         await logout();
+        localStorage.removeItem(STORAGE_KEY)
         navigate('/login');
     };
 
     return (
         <header className={styles.header}>
-
             {isAuthenticated && <TokenExpiryIndicator warningThreshold={300} />}
 
             <div className={styles.container}>
                 {/* Logo */}
                 <div className={styles.logo}>
-                    <img src="/src/assets/static/icon/economy-logo.png" alt="logo" />
+                    <img src={logo} alt="logo" />
+                </div>
+
+                {/* ✅ Survey & Company Info - With Icon */}
+                <div className={styles.centerInfo}>
+                    <div className={styles.surveyTitleWrapper}>
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            className={styles.surveyIcon}
+                        >
+                            <path
+                                d="M2 4C2 2.89543 2.89543 2 4 2H12C13.1046 2 14 2.89543 14 4V12C14 13.1046 13.1046 14 12 14H4C2.89543 14 2 13.1046 2 12V4Z"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                            <path
+                                d="M5 6H11M5 9H11"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                            />
+                        </svg>
+                        <h1 className={styles.surveyTitle}>
+                            საჯარო სექტორში სამუშაო ძალაზე მოთხოვნის კვლევის კითხვარი
+                        </h1>
+                    </div>
+                    <p className={styles.companyName}>
+                        {user?.designation || 'საწარმოს დასახელება'}
+                    </p>
                 </div>
 
                 {/* User Menu */}
@@ -57,10 +93,10 @@ export const Header: React.FC = () => {
                         onClick={() => setDropdownOpen(!dropdownOpen)}
                     >
                         <div className={styles.avatar}>
-                            {getInitials(user?.name)}
+                            {getInitials(user?.fullName || 'U')}
                         </div>
                         <div className={styles.userInfo}>
-                            <span className={styles.userName}>{user?.name || 'User'}</span>
+                            <span className={styles.userName}>{user?.fullName || 'User'}</span>
                             <span className={styles.userEmail}>{user?.email}</span>
                         </div>
                         <svg
@@ -86,50 +122,7 @@ export const Header: React.FC = () => {
                                 className={styles.overlay}
                                 onClick={() => setDropdownOpen(false)}
                             />
-                            <div className={styles.dropdown}>
-                                <button
-                                    className={styles.dropdownItem}
-                                    onClick={() => {
-                                        navigate('/profile');
-                                        setDropdownOpen(false);
-                                    }}
-                                >
-                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                        <path
-                                            d="M9 9C10.6569 9 12 7.65685 12 6C12 4.34315 10.6569 3 9 3C7.34315 3 6 4.34315 6 6C6 7.65685 7.34315 9 9 9Z"
-                                            stroke="currentColor"
-                                            strokeWidth="1.5"
-                                        />
-                                        <path
-                                            d="M15 15C15 12.7909 12.3137 11 9 11C5.68629 11 3 12.7909 3 15"
-                                            stroke="currentColor"
-                                            strokeWidth="1.5"
-                                            strokeLinecap="round"
-                                        />
-                                    </svg>
-                                    პროფილი
-                                </button>
-
-                                <button
-                                    className={styles.dropdownItem}
-                                    onClick={() => {
-                                        navigate('/dashboard');
-                                        setDropdownOpen(false);
-                                    }}
-                                >
-                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                        <path
-                                            d="M3 9H7.5M3 5.25H15M3 12.75H15"
-                                            stroke="currentColor"
-                                            strokeWidth="1.5"
-                                            strokeLinecap="round"
-                                        />
-                                    </svg>
-                                    Dashboard
-                                </button>
-
-                                <div className={styles.dropdownDivider} />
-
+                            <div className={styles.dropdown} ref={dropdownRef}>
                                 <button
                                     className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
                                     onClick={handleLogout}

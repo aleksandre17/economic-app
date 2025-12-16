@@ -1,45 +1,74 @@
 import React from 'react';
-import { useSurvey } from '../context/SurveyContext';
-import { useStepNavigation } from '../hooks/useStepNavigation.tsx';
+import { useSurvey } from '../context/surveyContext.tsx';
+import { useSurveyNavigation } from '../hooks/useSurveyNavigation';
 import { ProgressBar } from './navigation/ProgressBar/ProgressBar';
 import { StepIndicator } from './navigation/StepIndicator/StepIndicator';
-import { Step1Personal } from './steps/Step1Personal/Step1Personal';
-import { Step2Vacancies } from './steps/Step2Vacancies/Step2Vacancies';
-import { Step3Additional } from './steps/Step3Additional/Step3Additional';
-import { Step4Reduction } from './steps/Step4Reduction/Step4Reduction';
-import { Step5Review } from './steps/Step5Review/Step5Review';
+import { StepNavigation } from './navigation/StepNavigation/StepNavigation';
+import { getStepConfig, type StepNumber} from '../config';
+import { useModalManager } from '../hooks/useModalManager.tsx';
+import {NotificationType, useNotificationStore} from "@/shared/packages/notifications";
 import styles from './SurveyContainer.module.css';
+import {collectErrorMessages} from "@features/survey/utils";
+import {STEP_METADATA_ARRAY} from "@features/survey/config/stepMetadata.ts";
 
-const STEPS = [
-    { id: 1, title: 'HR მონაცემები', description: 'დასაქმებულთა რაოდენობა' },
-    { id: 2, title: 'ვაკანსიები', description: 'ვაკანსიების ინფორმაცია' },
-    { id: 3, title: 'ზრდის გეგმები', description: 'დასაქმების ზრდა' },
-    { id: 4, title: 'შემცირების გეგმები', description: 'დასაქმების შემცირება' },
-    { id: 5, title: 'გადახედვა', description: 'საბოლოო შემოწმება' },
-];
 
+/**
+ * Option B: Global Navigation at Bottom
+ *
+ * ✅ Consistent navigation
+ * ✅ Always visible (fixed)
+ * ✅ Cleaner step components
+ * ✅ Better UX on mobile
+ */
 export const SurveyContainer: React.FC = () => {
 
+    // ═══════════════════════════════════════════════════════════
+    // Context & Navigation
+    // ═══════════════════════════════════════════════════════════
+    const { isLoading, isSubmitting } = useSurvey();
+    const navigation = useSurveyNavigation();
+    const notifications = useNotificationStore((state) => state.showNotifications);
+    const modal = useModalManager();
 
-    const { currentStep, isLoading } = useSurvey();
-    const { progress, totalSteps, goToStep } = useStepNavigation();
+    const stepConfig = getStepConfig(navigation.currentStep);
+    const StepComponent = stepConfig.component;
+    const StepModal = stepConfig.modal;
 
-    const renderStep = () => {
-        switch (currentStep) {
-            case 1:
-                return <Step1Personal />;
-            case 2:
-                return <Step2Vacancies />;
-            case 3:
-                return <Step3Additional />;
-            case 4:
-                return <Step4Reduction />;
-            case 5:
-                return <Step5Review />;
-            default:
-                return <Step1Personal />;
+    if (!stepConfig) { return <div>Invalid step</div>;}
+
+    // ═══════════════════════════════════════════════════════════
+    // Event Handlers
+    // ═══════════════════════════════════════════════════════════
+    // Trigger form validation and navigate
+    const handleNavigateNext = () => {
+        const form = document.getElementById('step-form') as HTMLFormElement;
+
+        if (form) {
+            // Let form validation handle it
+            form.requestSubmit();
+        } else {
+            // Direct navigation (no form)
+            navigation.goToNextStep();
         }
     };
+
+    // Generic submit handler
+    const handleStepSubmit = (_: any) => {
+        navigation.goToNextStep();
+    };
+
+    const handleStepError  = (errors: any) => {
+        const allMessages = collectErrorMessages(errors);
+        console.log('Form Errors:', allMessages);
+
+        if (allMessages.length > 0) {
+            notifications(allMessages, NotificationType.ERROR, 6000);
+        }
+    };
+
+    if (!stepConfig) {
+        return <div>Invalid step</div>;
+    }
 
     if (isLoading) {
         return (
@@ -54,32 +83,58 @@ export const SurveyContainer: React.FC = () => {
 
     return (
         <div className={styles.surveyWrapper}>
-            {/* Blue Gradient Banner - Short */}
 
-
-            {/* White Controls Section - Progress & Steps */}
+            {/* Progress & Step Indicator */}
             <div className={styles.controlsSection}>
                 <div className={styles.container}>
                     <ProgressBar
-                        progress={progress}
-                        currentStep={currentStep}
-                        totalSteps={totalSteps}
+                        progress={navigation.getProgress()}
+                        currentStep={navigation.currentStep}
+                        totalSteps={navigation.totalSteps}
                     />
 
                     <StepIndicator
-                        steps={STEPS}
-                        currentStep={currentStep}
-                        onStepClick={goToStep}
+                        steps={STEP_METADATA_ARRAY}
+                        currentStep={navigation.currentStep}
+                        onStepClick={navigation.goToStep}
                     />
                 </div>
             </div>
 
-            {/* Step Content */}
+            {/* Steps */}
             <div className={styles.content}>
                 <div className={styles.container}>
-                    {renderStep()}
+                    <StepComponent onOpenModal={modal.openModal} onSubmit={handleStepSubmit} onError={handleStepError} />
                 </div>
             </div>
+
+            {/* Global Navigation */}
+            <div className={styles.navigationWrapper}>
+                <div className={styles.container}>
+                    <StepNavigation
+                        onBack={navigation.goToPreviousStep}
+                        onNext={handleNavigateNext}
+                        canNavigateNext={navigation.canNavigateNext}
+                        canNavigatePrevious={navigation.canNavigatePrevious}
+                        isFirstStep={navigation.isFirstStep()}
+                        isLastStep={navigation.isLastStep()}
+                        showStepCounter
+                        isSubmitting={isSubmitting} // Disable during submission
+                        currentStep={navigation.currentStep}
+                        totalSteps={navigation.totalSteps}
+                        fixed // ✅ Fixed at bottom
+                    />
+                </div>
+            </div>
+
+            {/* ✅ Modal - Render directly in JSX */}
+            {modal.isOpen && StepModal && (
+                <StepModal
+                    isOpen={modal.isOpen}
+                    onClose={modal.closeModal}
+                    entry={modal.entry}
+                />
+            )}
         </div>
     );
 };

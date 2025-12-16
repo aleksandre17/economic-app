@@ -1,54 +1,50 @@
-import React, { useState } from 'react';
-import { useStepNavigation } from '../../../hooks/useStepNavigation.tsx';
-import { Step3Provider, useStep3, type GrowthPlanEntry } from './context/Step3Context';
-import { Card } from '../../../../../shared/componets/ui/Card/Card';
-import { Button } from '../../../../../shared/componets/ui/Button/Button';
-import { StepNavigation } from '../../navigation/StepNavigation/StepNavigation';
-import { AddGrowthModal } from './components/AddGrowthModal/AddGrowthModal';
+// Step3Additional.tsx
+import React from 'react';
+import { Card } from '@/shared/componets/ui/Card/Card';
+import { Button } from '@/shared/componets/ui/Button/Button';
+import { useSurvey } from '@features/survey/context/surveyContext.tsx';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {Step3Data, step3Schema} from '@features/survey/schemas';
 import { GrowthTable } from './components/GrowthTable/GrowthTable';
+import type {GrowthPlanEntry} from '@features/survey/types/survey.types';
 import styles from './Step3Additional.module.css';
+import {StepProps} from "@features/survey/utils/typeHelpers.ts";
+import {FormCheckboxList} from "@/shared/componets/ui/Checkbox";
+import {GROWTH_PLAN_ITEMS} from "@features/survey/constants";
 
-const Step3Content: React.FC = () => {
-    const { goToNextStep, goToPreviousStep, isFirstStep, isLastStep } = useStepNavigation();
+
+export const Step3Additional: React.FC<StepProps<Step3Data, GrowthPlanEntry>> = ({ onOpenModal, onSubmit, onError }) => {
+    const { formData, updateFormData } = useSurvey();
+
     const {
-        planOneYearGrowth,
-        planFiveYearGrowth,
-        setPlanOneYearGrowth,
-        setPlanFiveYearGrowth,
-        entries,
-    } = useStep3();
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm<Step3Data>({
+        resolver: zodResolver(step3Schema),
+        values: formData,
+    });
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingEntry, setEditingEntry] = useState<GrowthPlanEntry | null>(null);
+    const planOneYearGrowth = formData.planOneYearGrowth;
+    const planFiveYearGrowth = formData.planFiveYearGrowth;
+    const entries = formData.growthPlanEntries || [];
 
     const showGrowthSection = planOneYearGrowth || planFiveYearGrowth;
 
-    const handleNext = () => {
-        // თუ checkbox-ები checked-ია მაგრამ ჩანაწერები არ არის
-        if (showGrowthSection && entries.length === 0) {
-            alert('გთხოვთ დაამატოთ მინიმუმ ერთი ჩანაწერი');
-            return;
-        }
-        goToNextStep();
-    };
-
-    const handleAdd = () => {
-        setEditingEntry(null);
-        setIsModalOpen(true);
-    };
-
     const handleEdit = (entry: GrowthPlanEntry) => {
-        setEditingEntry(entry);
-        setIsModalOpen(true);
+        onOpenModal(entry);
     };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setEditingEntry(null);
+    const handleDelete = (id: string | number) => {
+        if (!confirm('ნამდვილად გსურთ წაშლა?')) return;
+        const filtered = entries.filter((e) => e.id !== id);
+        updateFormData({ growthPlanEntries: filtered });
     };
+
 
     return (
-        <div className={styles.container}>
+        <form onSubmit={handleSubmit(onSubmit!, onError)} id="step-form">
             <Card>
                 <div className={styles.header}>
                     <h2>დასაქმების გეგმები</h2>
@@ -56,39 +52,19 @@ const Step3Content: React.FC = () => {
                 </div>
 
                 <div className={styles.form}>
-                    {/* Checkbox 1 */}
-                    <div className={styles.checkboxSection}>
-                        <label className={styles.checkboxLabel}>
-                            <input
-                                type="checkbox"
-                                checked={planOneYearGrowth}
-                                onChange={(e) => setPlanOneYearGrowth(e.target.checked)}
-                                className={styles.checkbox}
-                            />
-                            <span>
-                მომდევნო <strong>1 წლის</strong> განმავლობაში, აპირებთ თუ არა დასაქმებულთა
-                რაოდენობის გაზრდას?
-              </span>
-                        </label>
-                    </div>
 
-                    {/* Checkbox 2 */}
-                    <div className={styles.checkboxSection}>
-                        <label className={styles.checkboxLabel}>
-                            <input
-                                type="checkbox"
-                                checked={planFiveYearGrowth}
-                                onChange={(e) => setPlanFiveYearGrowth(e.target.checked)}
-                                className={styles.checkbox}
-                            />
-                            <span>
-                მომდევნო <strong>5 წლის</strong> განმავლობაში, აპირებთ თუ არა დასაქმებულთა
-                რაოდენობის გაზრდას?
-              </span>
-                        </label>
-                    </div>
+                    <FormCheckboxList
+                        control={control}
+                        items={GROWTH_PLAN_ITEMS}
+                        onChange={(name, checked) => {
+                            updateFormData({ [name]: checked });
+                        }}
+                    />
 
-                    {/* Conditional Section - თუ მინიმუმ ერთი checkbox checked-ია */}
+                    {errors.growthPlanEntries && (
+                        <div className={styles.error}>{errors.growthPlanEntries.message as string}</div>
+                    )}
+
                     {showGrowthSection && (
                         <>
                             <div className={styles.divider} />
@@ -108,7 +84,7 @@ const Step3Content: React.FC = () => {
                                         </p>
                                     </div>
 
-                                    <Button variant="primary" onClick={handleAdd}>
+                                    <Button variant="primary" onClick={() => onOpenModal()} type="button">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                                             <path
                                                 d="M9 3.5v11M3.5 9h11"
@@ -122,34 +98,25 @@ const Step3Content: React.FC = () => {
                                 </div>
 
                                 <div className={styles.tableSection}>
-                                    <GrowthTable onEdit={handleEdit} />
+                                    <GrowthTable
+                                        entries={entries}
+                                        onEdit={handleEdit}
+                                        onDelete={handleDelete}
+                                        planOneYearGrowth={planOneYearGrowth}
+                                        planFiveYearGrowth={planFiveYearGrowth}
+                                    />
                                 </div>
+
+                                {entries.length > 0 && (
+                                    <div className={styles.info}>
+                                        ✓ {entries.length} ჩანაწერი დამატებულია
+                                    </div>
+                                )}
                             </div>
                         </>
                     )}
                 </div>
-
-                <StepNavigation
-                    onBack={goToPreviousStep}
-                    onNext={handleNext}
-                    isFirstStep={isFirstStep}
-                    isLastStep={isLastStep}
-                />
             </Card>
-
-            <AddGrowthModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                editEntry={editingEntry}
-            />
-        </div>
-    );
-};
-
-export const Step3Additional: React.FC = () => {
-    return (
-        <Step3Provider>
-            <Step3Content />
-        </Step3Provider>
+        </form>
     );
 };

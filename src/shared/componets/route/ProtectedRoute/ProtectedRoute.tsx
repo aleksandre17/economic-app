@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../../../../features/auth/context/AuthContext.tsx';
+import { useAuth } from '@features/auth/context/AuthContext.tsx';
 import styles from './ProtectedRoute.module.css';
 
 export const ProtectedRoute: React.FC = () => {

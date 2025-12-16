@@ -1,54 +1,47 @@
-import React, { useState } from 'react';
-import { useStepNavigation } from '../../../hooks/useStepNavigation.tsx';
-import { Step4Provider, useStep4, type ReductionPlanEntry } from './context/Step4Context';
-import { Card } from '../../../../../shared/componets/ui/Card/Card';
-import { Button } from '../../../../../shared/componets/ui/Button/Button';
-import { StepNavigation } from '../../navigation/StepNavigation/StepNavigation';
-import { AddReductionModal } from './components/AddReductionModal/AddReductionModal';
+// Step4Reduction.tsx
+import React from 'react';
+
+import { Card } from '@/shared/componets/ui/Card/Card';
+import { Button } from '@/shared/componets/ui/Button/Button';
+import { useSurvey } from '@features/survey/context/surveyContext.tsx';
+import { useForm } from 'react-hook-form';
 import { ReductionTable } from './components/ReductionTable/ReductionTable';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import {Step4Data, step4Schema} from '@features/survey/schemas';
+import type {ReductionPlanEntry} from '@features/survey/types/survey.types';
+import {StepProps} from "@features/survey/utils/typeHelpers.ts";
+import {REDUCTION_PLAN_ITEMS} from "@features/survey/constants";
+import {FormCheckboxList} from "@/shared/componets/ui/Checkbox";
+
 import styles from './Step4Reduction.module.css';
 
-const Step4Content: React.FC = () => {
-    const { goToNextStep, goToPreviousStep, isFirstStep, isLastStep } = useStepNavigation();
-    const {
-        planOneYearReduction,
-        planFiveYearReduction,
-        setPlanOneYearReduction,
-        setPlanFiveYearReduction,
-        entries,
-    } = useStep4();
+export const Step4Reduction: React.FC<StepProps<Step4Data, ReductionPlanEntry>> = ({ onOpenModal, onSubmit, onError }) => {
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingEntry, setEditingEntry] = useState<ReductionPlanEntry | null>(null);
+    const { formData, updateFormData } = useSurvey();
+    const { handleSubmit, control, formState: { errors } } = useForm<Step4Data>({
+        resolver: zodResolver(step4Schema),
+        values: formData,
+    });
+
+    const planOneYearReduction = formData.planOneYearReduction;
+    const planFiveYearReduction = formData.planFiveYearReduction;
+    const entries = formData.reductionPlanEntries || [];
 
     const showReductionSection = planOneYearReduction || planFiveYearReduction;
 
-    const handleNext = () => {
-        // თუ checkbox-ები checked-ია მაგრამ ჩანაწერები არ არის
-        if (showReductionSection && entries.length === 0) {
-            alert('გთხოვთ დაამატოთ მინიმუმ ერთი ჩანაწერი');
-            return;
-        }
-        goToNextStep();
-    };
-
-    const handleAdd = () => {
-        setEditingEntry(null);
-        setIsModalOpen(true);
-    };
-
     const handleEdit = (entry: ReductionPlanEntry) => {
-        setEditingEntry(entry);
-        setIsModalOpen(true);
+        onOpenModal(entry);
     };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setEditingEntry(null);
+    const handleDelete = (id: string | number) => {
+        if (!confirm('ნამდვილად გსურთ წაშლა?')) return;
+        const filtered = entries.filter((e) => e.id !== id);
+        updateFormData({ reductionPlanEntries: filtered });
     };
 
     return (
-        <div className={styles.container}>
+        <form onSubmit={handleSubmit(onSubmit!, onError)} id="step-form">
             <Card>
                 <div className={styles.header}>
                     <h2>დასაქმების შემცირების გეგმები</h2>
@@ -56,39 +49,19 @@ const Step4Content: React.FC = () => {
                 </div>
 
                 <div className={styles.form}>
-                    {/* Checkbox 1 */}
-                    <div className={styles.checkboxSection}>
-                        <label className={styles.checkboxLabel}>
-                            <input
-                                type="checkbox"
-                                checked={planOneYearReduction}
-                                onChange={(e) => setPlanOneYearReduction(e.target.checked)}
-                                className={styles.checkbox}
-                            />
-                            <span>
-                მომდევნო <strong>1 წლის</strong> განმავლობაში, აპირებთ თუ არა დასაქმებულთა
-                რაოდენობის შემცირებას?
-              </span>
-                        </label>
-                    </div>
 
-                    {/* Checkbox 2 */}
-                    <div className={styles.checkboxSection}>
-                        <label className={styles.checkboxLabel}>
-                            <input
-                                type="checkbox"
-                                checked={planFiveYearReduction}
-                                onChange={(e) => setPlanFiveYearReduction(e.target.checked)}
-                                className={styles.checkbox}
-                            />
-                            <span>
-                მომდევნო <strong>5 წლის</strong> განმავლობაში, აპირებთ თუ არა დასაქმებულთა
-                რაოდენობის შემცირებას?
-              </span>
-                        </label>
-                    </div>
+                    <FormCheckboxList
+                        control={control}
+                        items={REDUCTION_PLAN_ITEMS}
+                        onChange={(name, checked) => {
+                            updateFormData({ [name]: checked });
+                        }}
+                    />
 
-                    {/* Conditional Section - თუ მინიმუმ ერთი checkbox checked-ია */}
+                    {errors.reductionPlanEntries && (
+                        <div className={styles.error}>{errors.reductionPlanEntries.message as string}</div>
+                    )}
+
                     {showReductionSection && (
                         <>
                             <div className={styles.divider} />
@@ -108,7 +81,7 @@ const Step4Content: React.FC = () => {
                                         </p>
                                     </div>
 
-                                    <Button variant="primary" onClick={handleAdd}>
+                                    <Button variant="primary" onClick={() => onOpenModal()} type="button">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                                             <path
                                                 d="M9 3.5v11M3.5 9h11"
@@ -122,34 +95,25 @@ const Step4Content: React.FC = () => {
                                 </div>
 
                                 <div className={styles.tableSection}>
-                                    <ReductionTable onEdit={handleEdit} />
+                                    <ReductionTable
+                                        entries={entries}
+                                        onEdit={handleEdit}
+                                        onDelete={handleDelete}
+                                        planOneYearReduction={planOneYearReduction}
+                                        planFiveYearReduction={planFiveYearReduction}
+                                    />
                                 </div>
+
+                                {entries.length > 0 && (
+                                    <div className={styles.info}>
+                                        ✓ {entries.length} ჩანაწერი დამატებულია
+                                    </div>
+                                )}
                             </div>
                         </>
                     )}
                 </div>
-
-                <StepNavigation
-                    onBack={goToPreviousStep}
-                    onNext={handleNext}
-                    isFirstStep={isFirstStep}
-                    isLastStep={isLastStep}
-                />
             </Card>
-
-            <AddReductionModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                editEntry={editingEntry}
-            />
-        </div>
-    );
-};
-
-export const Step4Reduction: React.FC = () => {
-    return (
-        <Step4Provider>
-            <Step4Content />
-        </Step4Provider>
+        </form>
     );
 };

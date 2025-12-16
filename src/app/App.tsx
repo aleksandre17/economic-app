@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import {AuthProvider, useAuth} from '.././features/auth/context/AuthContext';
+import {AuthProvider} from '.././features/auth/context/AuthContext';
 
 import { ProtectedRoute, PublicRoute} from "../shared/componets/route";
 //import { useTokenRefresh } from '../shared/hooks/useTokenRefresh';
@@ -24,9 +24,6 @@ const SuccessPage = lazy(() =>
     }))
 );
 
-
-console.log("SurveyPage" + SurveyPage);
-
 const PageLoader = () => (
     <div style={{
         display: 'flex',
@@ -34,7 +31,7 @@ const PageLoader = () => (
         justifyContent: 'center',
         minHeight: '100vh',
         fontSize: '18px',
-        color: '#666'
+        color: '#667'
     }}>
         იტვირთება...
     </div>

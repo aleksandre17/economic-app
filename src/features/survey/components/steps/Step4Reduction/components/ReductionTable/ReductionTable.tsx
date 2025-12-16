@@ -1,13 +1,31 @@
-import React from 'react';
-import { useStep4, type ReductionPlanEntry } from '../../context/Step4Context';
+// ReductionTable.tsx
+import React, {useCallback} from 'react';
+import type { ReductionPlanEntry } from '@features/survey/types/survey.types';
 import styles from './ReductionTable.module.css';
+import {CLASSIFIER_KEYS, useClassifier} from "@/shared/packages/classifiers";
 
 interface ReductionTableProps {
+    entries: ReductionPlanEntry[];
     onEdit: (entry: ReductionPlanEntry) => void;
+    onDelete: (id: string | number) => void;
+    planOneYearReduction?: boolean;
+    planFiveYearReduction?: boolean;
 }
 
-export const ReductionTable: React.FC<ReductionTableProps> = ({ onEdit }) => {
-    const { entries, deleteEntry, planOneYearReduction, planFiveYearReduction } = useStep4();
+export const ReductionTable: React.FC<ReductionTableProps> = ({
+  entries,
+  onEdit,
+  onDelete,
+  planOneYearReduction,
+  planFiveYearReduction,
+}) => {
+
+    const classifier = useClassifier(CLASSIFIER_KEYS.CATEGORIES, { autoLoad: true });
+
+    const findClassifierByCode = useCallback((code: string) => {
+        const data = classifier.getData() || [];
+        return data.find(item => item.code === code)?.name || null;
+    }, [classifier]);
 
     if (entries.length === 0) {
         return (
@@ -20,13 +38,7 @@ export const ReductionTable: React.FC<ReductionTableProps> = ({ onEdit }) => {
                 <p>დააჭირეთ "დამატება" ღილაკს ჩანაწერის დასამატებლად</p>
             </div>
         );
-    };
-
-    const handleDelete = (id: string) => {
-        if (window.confirm('დარწმუნებული ხართ რომ გსურთ ჩანაწერის წაშლა?')) {
-            deleteEntry(id);
-        }
-    };
+    }
 
     return (
         <div className={styles.container}>
@@ -35,30 +47,31 @@ export const ReductionTable: React.FC<ReductionTableProps> = ({ onEdit }) => {
                     <thead>
                     <tr>
                         <th>პროფესიული ჯგუფი</th>
-                        {planOneYearReduction && <th>1 წლის შემცირება</th>}
-                        {planFiveYearReduction && <th>5 წლის შემცირება</th>}
+                        {planOneYearReduction && <th>1 წლის<br/>შემცირება</th>}
+                        {planFiveYearReduction && <th>5 წლის<br/>შემცირება</th>}
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     {entries.map((entry) => (
                         <tr key={entry.id}>
-                            <td className={styles.category}>{entry.category}</td>
+                            <td className={styles.category}>{findClassifierByCode(entry.category)}</td>
                             {planOneYearReduction && (
-                                <td className={styles.number}>{entry.oneYearReduction || '-'}</td>
+                                <td className={styles.number}>{entry.oneYearReduction ?? '-'}</td>
                             )}
                             {planFiveYearReduction && (
-                                <td className={styles.number}>{entry.fiveYearReduction || '-'}</td>
+                                <td className={styles.number}>{entry.fiveYearReduction ?? '-'}</td>
                             )}
                             <td className={styles.actions}>
                                 <button
+                                    type="button"
                                     className={styles.editButton}
                                     onClick={() => onEdit(entry)}
                                     title="რედაქტირება"
                                 >
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path
-                                            d="M11.333 2A1.886 1.886 0 0114 4.667l-9 9-3.667.667.667-3.666 9-9z"
+                                            d="M11.333 2A1.886 1.886 0 0114 4.667l-9 9-3.667.667.667-3.667 9-9z"
                                             stroke="currentColor"
                                             strokeWidth="1.5"
                                             strokeLinecap="round"
@@ -68,8 +81,9 @@ export const ReductionTable: React.FC<ReductionTableProps> = ({ onEdit }) => {
                                 </button>
                                 <button
                                     className={styles.deleteButton}
-                                    onClick={() => handleDelete(entry.id)}
+                                    onClick={() => onDelete(entry.id)}
                                     title="წაშლა"
+                                    type="button"
                                 >
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path
@@ -86,6 +100,29 @@ export const ReductionTable: React.FC<ReductionTableProps> = ({ onEdit }) => {
                     ))}
                     </tbody>
                 </table>
+            </div>
+
+            <div className={styles.summary}>
+                <div className={styles.summaryItem}>
+                    <span className={styles.summaryLabel}>სულ ჩანაწერები:</span>
+                    <span className={styles.summaryValue}>{entries.length}</span>
+                </div>
+                {planOneYearReduction && (
+                    <div className={styles.summaryItem}>
+                        <span className={styles.summaryLabel}>სულ 1 წლის შემცირება:</span>
+                        <span className={styles.summaryValue}>
+                            {entries.reduce((sum, e) => sum + (e.oneYearReduction || 0), 0)}
+                        </span>
+                    </div>
+                )}
+                {planFiveYearReduction && (
+                    <div className={styles.summaryItem}>
+                        <span className={styles.summaryLabel}>სულ 5 წლის შემცირება:</span>
+                        <span className={styles.summaryValue}>
+                            {entries.reduce((sum, e) => sum + (e.fiveYearReduction || 0), 0)}
+                        </span>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 import type {LoginCredentials, AuthResponse, User} from '../types/auth.types';
 import { apiClient } from '../../../shared/api';
-import {STORAGE_KEY} from "../../survey/context/surveycontext.tsx";
+import {STORAGE_KEY} from "../../survey/context/surveyContext.tsx";
 
 
 /**
@@ -28,8 +28,9 @@ export const authApi = {
     login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
         try {
 
+
             const response = await apiClient.post<AuthResponse>('/auth/login', {
-                username: credentials.username,
+                email: credentials.email,
                 password: credentials.password,
             });
 

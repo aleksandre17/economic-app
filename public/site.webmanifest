@@ -1,0 +1,13 @@
+{
+  "name": "დასაქმებულთა რაოდენობის კვლევა",
+  "short_name": "გეოსტატი - დასაქმება",
+  "description": "დასაქმებულთა რაოდენობისა და ვაკანსიების შესახებ მონაცემთა შეგროვების სისტემა",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "categories": ["government", "business", "productivity"],
+  "lang": "ka",
+  "dir": "ltr"
+}

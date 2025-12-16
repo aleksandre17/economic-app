@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import { Button } from '../../../../../shared/componets/ui/Button/Button';
-import { Input } from '../../../../../shared/componets/ui/Input/Input';
+import { Button } from '@/shared/componets/ui/Button/Button.tsx';
+import { Input } from '@/shared/componets/ui/Input/Input.tsx';
 import styles from './LoginForm.module.css';
 
 export const LoginForm: React.FC = () => {
     const { login, error, clearError} = useAuth();
-    const [email, setEmail] = useState('user1');
-    const [password, setPassword] = useState('password123');
+    const [email, setEmail] = useState('ghambarashvilialeqsi@gmail.com');
+    const [password, setPassword] = useState('9680836');
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,7 +52,7 @@ export const LoginForm: React.FC = () => {
         try {
             console.log('🔐 Attempting login...');
 
-            const result = await login({email: "", username: email, password });
+            const result = await login({ email: email, password: password });
 
             if (result.success) {
                 console.log('✅ Login successful');
@@ -62,7 +62,7 @@ export const LoginForm: React.FC = () => {
                 navigate(from, { replace: true });
             } else {
                 console.error('❌ Login failed:', result.error);
-                setError(result.error || 'Login failed');
+                //setError(result.error || 'Login failed');
             }
         } catch (err: any) {
             console.error('❌ Login error:', err);
@@ -119,7 +119,7 @@ export const LoginForm: React.FC = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     disabled={isSubmitting}
                 >
-                    {showPassword ? '👁️' : '👁️‍🗨️'}
+                    {/*{showPassword ? '👁️' : '👁️‍🗨️'}*/}
                 </button>
             </div>
 
@@ -132,6 +132,26 @@ export const LoginForm: React.FC = () => {
             >
                 შესვლა
             </Button>
+
+            {/* ✅ Download Link - Elegantly placed */}
+            <div className={styles.helpSection}>
+                <a
+                    href="/docs/კითხვარი_2025.xlsx"
+                    className={styles.downloadLink}
+                    download
+                >
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path
+                            d="M9 11.25V3.75M9 11.25l-2.625-2.625M9 11.25l2.625-2.625M3.375 14.25h11.25"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                    <span>გადმოწერეთ კითხვარის Excel - ვერსია</span>
+                </a>
+            </div>
 
             {/* ⭐ Debug info (remove in production) */}
             {import.meta.env.DEV && (

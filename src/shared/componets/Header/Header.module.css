@@ -19,6 +19,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: var(--spacing-lg);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -32,10 +33,17 @@
     gap: var(--spacing-sm);
     cursor: pointer;
     transition: opacity var(--transition-fast);
+    flex-shrink: 0;
 }
 
 .logo:hover {
     opacity: 0.8;
+}
+
+.logo img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
 }
 
 .logoIcon {
@@ -51,11 +59,62 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
+   Center Info - Survey & Company
+   ═══════════════════════════════════════════════════════════ */
+
+.centerInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-align: center;
+    min-width: 0; /* Allow text truncation */
+}
+
+.surveyTitleWrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.surveyIcon {
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.surveyTitle {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.companyName {
+    font-size: 11px;
+    font-weight: var(--font-medium);
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════
    User Menu - Compact
    ═══════════════════════════════════════════════════════════ */
 
 .userMenu {
     position: relative;
+    flex-shrink: 0;
 }
 
 .userButton {
@@ -202,13 +261,36 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Mobile
+   Tablet (641px - 1024px)
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+    .centerInfo {
+        max-width: 400px;
+    }
+
+    .surveyTitle {
+        font-size: 13px;
+    }
+
+    .companyName {
+        font-size: 10px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Mobile (max-width: 768px)
    ═══════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
     .container {
         padding: 0 var(--spacing-md);
         height: 48px;
+        gap: var(--spacing-md);
+    }
+
+    .logo img {
+        height: 28px;
     }
 
     .logoText {
@@ -218,6 +300,19 @@
     .logoIcon {
         width: 18px;
         height: 18px;
+    }
+
+    /* ✅ Hide company name on mobile, keep survey title */
+    .centerInfo {
+        max-width: 200px;
+    }
+
+    .surveyTitle {
+        font-size: 12px;
+    }
+
+    .companyName {
+        display: none;
     }
 
     .userInfo {
@@ -231,5 +326,23 @@
 
     .dropdown {
         right: var(--spacing-md);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Small Mobile (max-width: 480px)
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+    .container {
+        gap: var(--spacing-sm);
+    }
+
+    .centerInfo {
+        max-width: 150px;
+    }
+
+    .surveyTitle {
+        font-size: 11px;
     }
 }

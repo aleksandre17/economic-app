@@ -1,22 +1,43 @@
-import React from 'react';
+// Step5Review.tsx
+import React, {useCallback} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSurvey } from '../../../context/SurveyContext';
-import { useStepNavigation } from '../../../hooks/useStepNavigation.tsx';
-import { surveyApi } from '../../../api/surveyapi';
-import { EMPLOYMENT_DURATION_OPTIONS } from '../../../types/survey.types';
-import { Card } from '../../../../../shared/componets/ui/Card/Card';
-import { Button } from '../../../../../shared/componets/ui/Button/Button';
-import { StepNavigation } from '../../navigation/StepNavigation/StepNavigation';
+import { useSurvey } from '@features/survey/context/surveyContext.tsx';
+import { useSurveyNavigation } from '@features/survey/hooks/useSurveyNavigation';
+import { useAuth } from '@features/auth/context/AuthContext';
+import { surveyApi } from '@features/survey/api/surveyapi';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { surveySchema } from '@features/survey/schemas';
+import { type SurveyFormData } from '@features/survey/types/survey.types';
+import {formatDuration} from "@features/survey/components/steps/share/Util.ts";
+import { Card } from '@/shared/componets/ui/Card/Card';
+import { Button } from '@/shared/componets/ui/Button/Button';
 import styles from './Step5Review.module.css';
-import {useAuth} from "../../../../auth/context/AuthContext.tsx";
+import {CLASSIFIER_KEYS, useClassifier} from "@/shared/packages/classifiers";
 
 export const Step5Review: React.FC = () => {
-    const { user } = useAuth(); // ⭐ Get current user
-    const { formData, isSubmitting, setIsSubmitting, resetForm, surveyId } = useSurvey(); // ⭐ Get surveyId
-    const { goToPreviousStep, goToStep, isFirstStep, isLastStep } = useStepNavigation();
+
+    const { user } = useAuth();
+    const { formData, isSubmitting, setIsSubmitting, resetForm, surveyId } = useSurvey();
+    const { goToStep } = useSurveyNavigation();
     const navigate = useNavigate();
 
-    const handleSubmit = async () => {
+    const {
+        handleSubmit,
+        formState: { errors },
+    } = useForm<SurveyFormData>({
+        resolver: zodResolver(surveySchema),
+        defaultValues: formData,
+    });
+
+    const classifier = useClassifier(CLASSIFIER_KEYS.CATEGORIES, { autoLoad: true });
+
+    const findClassifierByCode = useCallback((code: string) => {
+        const data = classifier.getData() || [];
+        return data.find(item => item.code === code)?.name || null;
+    }, [classifier]);
+
+    const onSubmit: SubmitHandler<SurveyFormData> = async () => {
         if (!user?.id) {
             alert('შეცდომა: მომხმარებელი არ არის ავტორიზებული');
             return;
@@ -25,14 +46,12 @@ export const Step5Review: React.FC = () => {
         try {
             setIsSubmitting(true);
 
-            // Prepare data for submission
             const submissionData = {
                 ...formData,
-                userId: user.id,
-                status: 'submitted' as const,
+                user: user,
+                status: 'success' as const,
             };
 
-            // ⭐ Smart Submit: Update if surveyId exists, Create if not
             if (surveyId) {
                 console.log('📝 Updating existing survey:', surveyId);
                 await surveyApi.updateSurvey(surveyId, submissionData);
@@ -43,13 +62,11 @@ export const Step5Review: React.FC = () => {
                 console.log('✅ Survey created successfully:', result);
             }
 
-            // Success
             resetForm();
             navigate('/survey/success');
-        } catch (error: never) {
+        } catch (error: any) {
             console.error('❌ Submit error:', error);
 
-            // User-friendly error message
             const errorMessage = error.response?.data?.message
                 || error.message
                 || 'დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.';
@@ -65,25 +82,63 @@ export const Step5Review: React.FC = () => {
     const growthPlanEntries = formData.growthPlanEntries || [];
     const reductionPlanEntries = formData.reductionPlanEntries || [];
 
-    const getDurationLabel = (value: string) => {
-        const option = EMPLOYMENT_DURATION_OPTIONS.find((opt) => opt.value === value);
-        return option?.label || value;
-    };
+
+
+    // Check if there are validation errors
+    const hasErrors = Object.keys(errors).length > 0;
 
     return (
-        <div className={styles.container}>
+        <form onSubmit={handleSubmit(onSubmit)} id="step-form">
             <Card>
                 <div className={styles.header}>
                     <h2>გადახედვა</h2>
                     <p>გთხოვთ შეამოწმოთ მონაცემები გაგზავნამდე</p>
 
-                    {/* ⭐ Survey Status Indicator */}
                     {surveyId && (
                         <div className={styles.statusBadge}>
                             📝 არსებული კითხვარის განახლება
                         </div>
                     )}
                 </div>
+
+                {/* Validation Errors */}
+                {hasErrors && (
+                    <div className={styles.errorSection}>
+                        <h4>⚠️ გთხოვთ შეავსოთ ყველა სავალდებულო ველი:</h4>
+                        <ul className={styles.errorList}>
+                            {errors.hrEntries && (
+                                <li onClick={() => goToStep(1)}>
+                                    დასაქმებულთა მონაცემები: {errors.hrEntries.message}
+                                </li>
+                            )}
+                            {errors.hasVacancies2025 && (
+                                <li onClick={() => goToStep(2)}>
+                                    ვაკანსიები: {errors.hasVacancies2025.message}
+                                </li>
+                            )}
+                            {errors.vacancies2025Count && (
+                                <li onClick={() => goToStep(2)}>
+                                    ვაკანსიების რაოდენობა: {errors.vacancies2025Count.message}
+                                </li>
+                            )}
+                            {errors.vacancyEntries && (
+                                <li onClick={() => goToStep(2)}>
+                                    ვაკანსიების ჩანაწერები: {errors.vacancyEntries.message}
+                                </li>
+                            )}
+                            {errors.growthPlanEntries && (
+                                <li onClick={() => goToStep(3)}>
+                                    ზრდის გეგმები: {errors.growthPlanEntries.message}
+                                </li>
+                            )}
+                            {errors.reductionPlanEntries && (
+                                <li onClick={() => goToStep(4)}>
+                                    შემცირების გეგმები: {errors.reductionPlanEntries.message}
+                                </li>
+                            )}
+                        </ul>
+                    </div>
+                )}
 
                 <div className={styles.sections}>
                     {/* Step 1 - HR მონაცემები */}
@@ -95,6 +150,7 @@ export const Step5Review: React.FC = () => {
                                 size="sm"
                                 onClick={() => goToStep(1)}
                                 disabled={isSubmitting}
+                                type="button"
                             >
                                 რედაქტირება
                             </Button>
@@ -117,7 +173,7 @@ export const Step5Review: React.FC = () => {
                                     <tbody>
                                     {hrEntries.map((entry) => (
                                         <tr key={entry.id}>
-                                            <td>{entry.category}</td>
+                                            <td>{findClassifierByCode(entry.category)}</td>
                                             <td>{entry.quantity2025}</td>
                                             <td>{entry.educationLevels.average}</td>
                                             <td>{entry.educationLevels.professional}</td>
@@ -154,6 +210,7 @@ export const Step5Review: React.FC = () => {
                                 size="sm"
                                 onClick={() => goToStep(2)}
                                 disabled={isSubmitting}
+                                type="button"
                             >
                                 რედაქტირება
                             </Button>
@@ -163,8 +220,8 @@ export const Step5Review: React.FC = () => {
                             <div className={styles.dataItem}>
                                 <span className={styles.label}>2025 წელს გქონდათ ვაკანსიები:</span>
                                 <span className={styles.value}>
-                  {formData.hasVacancies2025 ? '✓ დიახ' : '✗ არა'}
-                </span>
+                                    {formData.hasVacancies2025 ? '✓ დიახ' : '✗ არა'}
+                                </span>
                             </div>
                             {formData.hasVacancies2025 && formData.vacancies2025Count && (
                                 <div className={styles.dataItem}>
@@ -189,11 +246,11 @@ export const Step5Review: React.FC = () => {
                                     <tbody>
                                     {vacancyEntries.map((entry) => (
                                         <tr key={entry.id}>
-                                            <td>{entry.category}</td>
+                                            <td>{findClassifierByCode(entry.category)}</td>
                                             <td>{entry.totalVacancies}</td>
                                             <td>{entry.announcedVacancies}</td>
                                             <td>{entry.unfilledVacancies}</td>
-                                            <td>{getDurationLabel(entry.employmentDuration)}</td>
+                                            <td>{formatDuration(entry.employmentDuration)}</td>
                                         </tr>
                                     ))}
                                     </tbody>
@@ -211,6 +268,7 @@ export const Step5Review: React.FC = () => {
                                 size="sm"
                                 onClick={() => goToStep(3)}
                                 disabled={isSubmitting}
+                                type="button"
                             >
                                 რედაქტირება
                             </Button>
@@ -220,14 +278,14 @@ export const Step5Review: React.FC = () => {
                             <div className={styles.dataItem}>
                                 <span className={styles.label}>1 წლის გეგმა:</span>
                                 <span className={styles.value}>
-                  {formData.planOneYearGrowth ? '✓ კი' : '✗ არა'}
-                </span>
+                                    {formData.planOneYearGrowth ? '✓ კი' : '✗ არა'}
+                                </span>
                             </div>
                             <div className={styles.dataItem}>
                                 <span className={styles.label}>5 წლის გეგმა:</span>
                                 <span className={styles.value}>
-                  {formData.planFiveYearGrowth ? '✓ კი' : '✗ არა'}
-                </span>
+                                    {formData.planFiveYearGrowth ? '✓ კი' : '✗ არა'}
+                                </span>
                             </div>
                         </div>
 
@@ -244,7 +302,7 @@ export const Step5Review: React.FC = () => {
                                     <tbody>
                                     {growthPlanEntries.map((entry) => (
                                         <tr key={entry.id}>
-                                            <td>{entry.category}</td>
+                                            <td>{findClassifierByCode(entry.category)}</td>
                                             {formData.planOneYearGrowth && <td>{entry.oneYearGrowth || '-'}</td>}
                                             {formData.planFiveYearGrowth && <td>{entry.fiveYearGrowth || '-'}</td>}
                                         </tr>
@@ -264,6 +322,7 @@ export const Step5Review: React.FC = () => {
                                 size="sm"
                                 onClick={() => goToStep(4)}
                                 disabled={isSubmitting}
+                                type="button"
                             >
                                 რედაქტირება
                             </Button>
@@ -273,14 +332,14 @@ export const Step5Review: React.FC = () => {
                             <div className={styles.dataItem}>
                                 <span className={styles.label}>1 წლის გეგმა:</span>
                                 <span className={styles.value}>
-                  {formData.planOneYearReduction ? '✓ კი' : '✗ არა'}
-                </span>
+                                    {formData.planOneYearReduction ? '✓ კი' : '✗ არა'}
+                                </span>
                             </div>
                             <div className={styles.dataItem}>
                                 <span className={styles.label}>5 წლის გეგმა:</span>
                                 <span className={styles.value}>
-                  {formData.planFiveYearReduction ? '✓ კი' : '✗ არა'}
-                </span>
+                                    {formData.planFiveYearReduction ? '✓ კი' : '✗ არა'}
+                                </span>
                             </div>
                         </div>
 
@@ -297,7 +356,7 @@ export const Step5Review: React.FC = () => {
                                     <tbody>
                                     {reductionPlanEntries.map((entry) => (
                                         <tr key={entry.id}>
-                                            <td>{entry.category}</td>
+                                            <td>{findClassifierByCode(entry.category)}</td>
                                             {formData.planOneYearReduction && <td>{entry.oneYearReduction || '-'}</td>}
                                             {formData.planFiveYearReduction && <td>{entry.fiveYearReduction || '-'}</td>}
                                         </tr>
@@ -309,15 +368,8 @@ export const Step5Review: React.FC = () => {
                     </div>
                 </div>
 
-                <StepNavigation
-                    onBack={goToPreviousStep}
-                    onNext={handleSubmit}
-                    isFirstStep={isFirstStep}
-                    isLastStep={isLastStep}
-                    isSubmitting={isSubmitting}
-                    nextLabel={surveyId ? 'განახლება' : 'გაგზავნა'} 
-                />
+                {/* No StepNavigation here - uses global navigation */}
             </Card>
-        </div>
+        </form>
     );
 };

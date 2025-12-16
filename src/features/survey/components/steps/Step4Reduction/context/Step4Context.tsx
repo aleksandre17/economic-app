@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useCallback } from 'react';
-import { useSurvey } from '../../../../context/SurveyContext';
+import { useSurvey } from '../../../../context/surveyContext.tsx';
 
 export interface ReductionPlanEntry {
     id: string;

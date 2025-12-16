@@ -1,0 +1,20 @@
+# robots.txt for employment-survey.geostat.ge
+
+User-agent: *
+Allow: /
+
+# Disallow authentication pages
+Disallow: /login
+Disallow: /auth/*
+
+# Disallow API endpoints
+Disallow: /api/*
+
+# Allow all other pages
+Allow: /
+
+# Sitemap
+Sitemap: https://survey-moesd.geostat.ge/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1

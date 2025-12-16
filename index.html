@@ -1,13 +1,191 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/assets/static/icon/economy-logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>economic-app</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>economic-app</title>
+  <!-- ═══════════════════════════════════════════════════════════
+       Primary Meta Tags
+       ═══════════════════════════════════════════════════════════ -->
+  <title>დასაქმებულთა რაოდენობის კვლევა | საქართველოს სტატისტიკის ეროვნული სამსახური</title>
+  <meta name="title" content="დასაქმებულთა რაოდენობის კვლევა | საქართველოს სტატისტიკის ეროვნული სამსახური" />
+  <meta name="description" content="დასაქმებულთა რაოდენობისა და ვაკანსიების შესახებ მონაცემთა შეგროვების ელექტრონული სისტემა. საქართველოს სტატისტიკის ეროვნული სამსახურის ოფიციალური პლატფორმა." />
+  <meta name="keywords" content="დასაქმება, ვაკანსია, სტატისტიკა, გეოსტატი, საქართველო, HR მონაცემები, კადრები, სამუშაო ძალა, ეკონომიკა" />
+  <meta name="author" content="საქართველოს სტატისტიკის ეროვნული სამსახური (გეოსტატი)" />
+  <meta name="developer" content="sisvadzeal@gmail.com" />
+  <meta name="robots" content="index, follow" />
+  <meta name="language" content="Georgian" />
+  <meta name="geo.region" content="GE" />
+  <meta name="geo.placename" content="Tbilisi, Georgia" />
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       Open Graph / Facebook
+       ═══════════════════════════════════════════════════════════ -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://survey-moesd.geostat.ge/" />
+  <meta property="og:title" content="დასაქმებულთა რაოდენობის კვლევა | საქართველოს სტატისტიკის ეროვნული სამსახური" />
+  <meta property="og:description" content="დასაქმებულთა რაოდენობისა და ვაკანსიების შესახებ მონაცემთა შეგროვების ელექტრონული სისტემა" />
+  <meta property="og:image" content="https://survey-moesd.geostat.ge/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="ka_GE" />
+  <meta property="og:site_name" content="საქართველოს სტატისტიკის ეროვნული სამსახური" />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       Twitter Card
+       ═══════════════════════════════════════════════════════════ -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://survey-moesd.geostat.ge/" />
+  <meta name="twitter:title" content="დასაქმებულთა რაოდენობის კვლევა | გეოსტატი" />
+  <meta name="twitter:description" content="დასაქმებულთა რაოდენობისა და ვაკანსიების შესახებ მონაცემთა შეგროვების ელექტრონული სისტემა" />
+  <meta name="twitter:image" content="https://survey-moesd.geostat.ge/twitter-card.png" />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       Canonical URL
+       ═══════════════════════════════════════════════════════════ -->
+  <link rel="canonical" href="https://survey-moesd.geostat.ge/" />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DNS Prefetch & Preconnect
+       ═══════════════════════════════════════════════════════════ -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       Fonts - Fira Sans (Georgian Support)
+       ═══════════════════════════════════════════════════════════ -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       Structured Data (JSON-LD)
+       ═══════════════════════════════════════════════════════════ -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "GovernmentOrganization",
+      "name": "საქართველოს სტატისტიკის ეროვნული სამსახური",
+      "alternateName": "გეოსტატი",
+      "url": "https://www.geostat.ge",
+      "logo": "https://survey-moesd.geostat.ge/logo.png",
+      "description": "საქართველოს სტატისტიკის ეროვნული სამსახური არის ოფიციალური სახელმწიფო ორგანო, რომელიც პასუხისმგებელია სტატისტიკური მონაცემების შეგროვება-დამუშავებასა და გავრცელებაზე",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "ცოტნე დადიანის 30",
+        "addressLocality": "თბილისი",
+        "postalCode": "0171",
+        "addressCountry": "GE"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+995-32-2-36-48-42",
+        "contactType": "Customer Service",
+        "areaServed": "GE",
+        "availableLanguage": ["Georgian", "English"]
+      },
+      "parentOrganization": {
+        "@type": "GovernmentOrganization",
+        "name": "საქართველოს ეკონომიკისა და მდგრადი განვითარების სამინისტრო"
+      },
+      "sameAs": [
+        "https://www.facebook.com/geostat.ge",
+        "https://twitter.com/geostat_ge"
+      ]
+    }
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "დასაქმებულთა რაოდენობის კვლევა",
+      "description": "დასაქმებულთა რაოდენობისა და ვაკანსიების შესახებ მონაცემთა შეგროვების ელექტრონული სისტემა",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "softwareVersion": "1.0.0",
+      "author": {
+        "@type": "GovernmentOrganization",
+        "name": "საქართველოს სტატისტიკის ეროვნული სამსახური"
+      },
+      "creator": {
+        "@type": "Person",
+        "name": "Aleksandre Sisvadze",
+        "email": "sisvadzeal@gmail.com"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "GEL"
+      },
+      "inLanguage": "ka"
+    }
+  </script>
+</head>
+<body>
+<!--
+═══════════════════════════════════════════════════════════════════════════
+
+დასაქმებულთა რაოდენობის კვლევის ელექტრონული სისტემა
+Employment Survey Data Collection System
+
+═══════════════════════════════════════════════════════════════════════════
+
+შემუშავებულია:
+Developed by:     Aleksandre Sisvadze
+Email:            sisvadzeal@gmail.com
+
+სამინისტრო:
+Ministry:         საქართველოს ეკონომიკისა და მდგრადი განვითარების სამინისტრო
+                  Ministry of Economy and Sustainable Development of Georgia
+
+═══════════════════════════════════════════════════════════════════════════
+
+ტექნოლოგიები / Technologies:
+- React 18
+- TypeScript
+- Vite
+- React Router
+- React Hook Form
+- Zod Validation
+- CSS Modules
+
+═══════════════════════════════════════════════════════════════════════════
+
+Copyright © 2025 National Statistics Office of Georgia
+All rights reserved.
+
+═══════════════════════════════════════════════════════════════════════════
+-->
+
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Noscript Fallback
+     ═══════════════════════════════════════════════════════════ -->
+<noscript>
+  <div style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        font-family: system-ui, -apple-system, sans-serif;
+        text-align: center;
+        padding: 20px;
+        background: #f9fafb;
+      ">
+    <h1 style="color: #1f2937; margin-bottom: 16px;">JavaScript აუცილებელია</h1>
+    <p style="color: #6b7280; max-width: 500px;">
+      ეს აპლიკაცია საჭიროებს JavaScript-ს სამუშაოდ.
+      გთხოვთ, ჩართოთ JavaScript თქვენს ბრაუზერში.
+    </p>
+  </div>
+</noscript>
+</body>
 </html>

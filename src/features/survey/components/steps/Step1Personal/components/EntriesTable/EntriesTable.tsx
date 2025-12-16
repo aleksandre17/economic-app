@@ -1,15 +1,24 @@
-import React from 'react';
-import { useStep1, type HREntry } from '../../context/Step1Context';
+import React, {useCallback} from 'react';
 import styles from './EntriesTable.module.css';
+import {CLASSIFIER_KEYS, useClassifier} from "@/shared/packages/classifiers";
+import {HREntry} from "@features/survey/schemas";
 
 interface EntriesTableProps {
     onEdit: (entry: HREntry) => void;
+    onDelete: (id : string | number) => void;
+    entries?: HREntry[];
 }
 
-export const EntriesTable: React.FC<EntriesTableProps> = ({ onEdit }) => {
-    const { entries, deleteEntry } = useStep1();
+export const EntriesTable: React.FC<EntriesTableProps> = ({ onEdit, onDelete, entries }) => {
 
-    if (entries.length === 0) {
+    const classifier = useClassifier(CLASSIFIER_KEYS.CATEGORIES, { autoLoad: true });
+
+    const findClassifierByCode = useCallback((code: string | number) => {
+        const data = classifier.getData() || [];
+        return data.find(item => item.code === code)?.name || null;
+    }, [classifier]);
+
+    if (entries?.length === 0) {
         return (
             <div className={styles.empty}>
                 <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
@@ -22,12 +31,6 @@ export const EntriesTable: React.FC<EntriesTableProps> = ({ onEdit }) => {
         );
     }
 
-    const handleDelete = (id: string) => {
-        if (window.confirm('დარწმუნებული ხართ რომ გსურთ ჩანაწერის წაშლა?')) {
-            deleteEntry(id);
-        }
-    };
-
     return (
         <div className={styles.container}>
             <div className={styles.tableWrapper}>
@@ -39,7 +42,8 @@ export const EntriesTable: React.FC<EntriesTableProps> = ({ onEdit }) => {
                         <th colSpan={3}>განათლების დონე 2025</th>
                         <th rowSpan={2}>რაოდენობა<br/>2024</th>
                         <th rowSpan={2}>საპენსიო<br/>(5 წელი)</th>
-                        <th rowSpan={2}></th>
+                        <th rowSpan={2}>გამსვლელთა რაოდენობა<br/>(5 წელი)</th>
+                        <th rowSpan={2}>მოქმედებები</th>
                     </tr>
                     <tr className={styles.subHeader}>
                         <th>საშუალო</th>
@@ -48,24 +52,26 @@ export const EntriesTable: React.FC<EntriesTableProps> = ({ onEdit }) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {entries.map((entry) => (
+                    {entries?.map((entry) => (
                         <tr key={entry.id}>
-                            <td className={styles.category}>{entry.category}</td>
+                            <td className={styles.category}>{findClassifierByCode(entry.category)}</td>
                             <td className={styles.number}>{entry.quantity2025}</td>
                             <td className={styles.number}>{entry.educationLevels.average}</td>
                             <td className={styles.number}>{entry.educationLevels.professional}</td>
                             <td className={styles.number}>{entry.educationLevels.higher}</td>
                             <td className={styles.number}>{entry.quantity2024}</td>
                             <td className={styles.number}>{entry.retirementNextFiveYears}</td>
+                            <td className={styles.number}>{entry.upcomingRetirements}</td>
                             <td className={styles.actions}>
                                 <button
+                                    type="button"
                                     className={styles.editButton}
                                     onClick={() => onEdit(entry)}
                                     title="რედაქტირება"
                                 >
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path
-                                            d="M11.333 2A1.886 1.886 0 0114 4.667l-9 9-3.667.666.667-3.666 9-9z"
+                                            d="M11.333 2A1.886 1.886 0 0114 4.667l-9 9-3.667.667.667-3.667 9-9z"
                                             stroke="currentColor"
                                             strokeWidth="1.5"
                                             strokeLinecap="round"
@@ -75,8 +81,9 @@ export const EntriesTable: React.FC<EntriesTableProps> = ({ onEdit }) => {
                                 </button>
                                 <button
                                     className={styles.deleteButton}
-                                    onClick={() => handleDelete(entry.id)}
+                                    onClick={() => onDelete(entry.id)}
                                     title="წაშლა"
+                                    type="button"
                                 >
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path
@@ -99,18 +106,18 @@ export const EntriesTable: React.FC<EntriesTableProps> = ({ onEdit }) => {
             <div className={styles.summary}>
                 <div className={styles.summaryItem}>
                     <span className={styles.summaryLabel}>სულ ჩანაწერები:</span>
-                    <span className={styles.summaryValue}>{entries.length}</span>
+                    <span className={styles.summaryValue}>{entries?.length}</span>
                 </div>
                 <div className={styles.summaryItem}>
                     <span className={styles.summaryLabel}>სულ დასაქმებული 2025:</span>
                     <span className={styles.summaryValue}>
-            {entries.reduce((sum, e) => sum + e.quantity2025, 0)}
+            {entries?.reduce((sum, e) => sum + (e.quantity2025 || 0), 0)}
           </span>
                 </div>
                 <div className={styles.summaryItem}>
                     <span className={styles.summaryLabel}>სულ დასაქმებული 2024:</span>
                     <span className={styles.summaryValue}>
-            {entries.reduce((sum, e) => sum + e.quantity2024, 0)}
+            {entries?.reduce((sum, e) => sum + (e.quantity2024 || 0), 0)}
           </span>
                 </div>
             </div>

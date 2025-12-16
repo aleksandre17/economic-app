@@ -1,35 +1,52 @@
 import React from 'react';
-import { Button } from '../../../../../shared/componets/ui/Button/Button';
+import { Button } from '@/shared/componets/ui/Button/Button.tsx';
 import styles from './StepNavigation.module.css';
 
 interface StepNavigationProps {
     onBack?: () => void;
     onNext?: () => void;
+    canNavigateNext: boolean;
+    canNavigatePrevious: boolean;
     isFirstStep: boolean;
     isLastStep: boolean;
     isSubmitting?: boolean;
     nextDisabled?: boolean;
     nextLabel?: string;
+    // ✅ NEW: Optional features
+    showStepCounter?: boolean;
+    currentStep?: number;
+    totalSteps?: number;
+    fixed?: boolean; // Fixed at bottom
 }
 
 export const StepNavigation: React.FC<StepNavigationProps> = ({
                                                                   onBack,
                                                                   onNext,
+                                                                  canNavigateNext,
+                                                                  canNavigatePrevious,
                                                                   isFirstStep,
                                                                   isLastStep,
                                                                   isSubmitting = false,
                                                                   nextDisabled = false,
                                                                   nextLabel,
+                                                                  // ✅ NEW props with defaults
+                                                                  showStepCounter = false,
+                                                                  currentStep,
+                                                                  totalSteps,
+                                                                  fixed = false,
                                                               }) => {
+    const containerClass = `${styles.container} ${fixed ? styles.fixed : ''}`;
+
     return (
-        <div className={styles.container}>
+        <div className={containerClass}>
             <div className={styles.buttons}>
+                {/* Back Button */}
                 {!isFirstStep && (
                     <Button
                         variant="outline"
                         size="md"
                         onClick={onBack}
-                        disabled={isSubmitting}
+                        disabled={!canNavigatePrevious || isSubmitting}
                     >
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ marginRight: '4px' }}>
                             <path
@@ -44,15 +61,24 @@ export const StepNavigation: React.FC<StepNavigationProps> = ({
                     </Button>
                 )}
 
+                {/* ✅ NEW: Step Counter (Optional) */}
+                {showStepCounter && currentStep && totalSteps && (
+                    <div className={styles.stepCounter}>
+                        ნაბიჯი {currentStep} / {totalSteps}
+                    </div>
+                )}
+
+                {/* Next Button */}
                 <Button
+                    onClick={onNext}
+                    type="submit"
                     variant="primary"
                     size="md"
-                    onClick={onNext}
                     loading={isSubmitting}
-                    disabled={nextDisabled || isSubmitting}
+                    disabled={!canNavigateNext || isSubmitting}
                     fullWidth={isFirstStep}
                 >
-                    {nextLabel || (isLastStep ? 'გაგზავნა' : 'შემდეგი')}
+                    {nextLabel || (isLastStep ? (isSubmitting ? 'იტვირთება...' : 'გაგზავნა') : 'შემდეგი')}
                     {!isLastStep && (
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ marginLeft: '4px' }}>
                             <path

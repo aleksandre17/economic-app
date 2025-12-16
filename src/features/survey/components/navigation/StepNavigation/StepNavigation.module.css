@@ -1,5 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    Step Navigation Buttons (Back/Next)
+   Enhanced with fixed positioning option
    ═══════════════════════════════════════════════════════════ */
 
 .container {
@@ -7,17 +8,49 @@
     margin-top: var(--spacing-xl);
 }
 
+/* ✅ NEW: Fixed at bottom option */
+.container.fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-top: 0;
+    padding: 16px 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+    z-index: 50;
+}
+
 .buttons {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: var(--spacing-md);
     max-width: 600px;
     margin: 0 auto;
 }
 
+/* ✅ Enhanced: When fixed, use full container width */
+.fixed .buttons {
+    max-width: 1200px;
+    padding: 0 24px;
+}
+
 /* When only Next button (first step) */
 .buttons:has(button:only-child) {
     justify-content: center;
+}
+
+/* ✅ NEW: Step Counter */
+.stepCounter {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    padding: 8px 16px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    white-space: nowrap;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -29,8 +62,51 @@
         margin-top: var(--spacing-lg);
     }
 
+    .container.fixed {
+        padding: 12px 0;
+    }
+
     .buttons {
         gap: var(--spacing-sm);
         max-width: 100%;
+    }
+
+    .fixed .buttons {
+        padding: 0 16px;
+    }
+
+    .stepCounter {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .buttons {
+        flex-wrap: nowrap;
+    }
+
+    .stepCounter {
+        order: 2;
+        flex: 1;
+        text-align: center;
+    }
+
+    .buttons button:first-of-type {
+        order: 1;
+    }
+
+    .buttons button:last-of-type {
+        order: 3;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Print
+   ═══════════════════════════════════════════════════════════ */
+
+@media print {
+    .container.fixed {
+        display: none;
     }
 }

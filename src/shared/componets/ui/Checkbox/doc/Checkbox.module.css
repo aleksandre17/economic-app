@@ -1,0 +1,175 @@
+/* components/Checkbox/Checkbox.module.css */
+
+.checkboxWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs, 4px);
+}
+
+/* Checkbox Section */
+.checkboxSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs, 4px);
+    padding: clamp(12px, 3vw, 16px);
+    background-color: var(--bg-secondary, #f9fafb);
+    border-radius: var(--radius-md, 6px);
+    border: 1px solid var(--border-primary, #e5e7eb);
+    transition: all 0.2s;
+}
+
+.checkboxSection:hover:not(.disabled) {
+    border-color: #d1d5db;
+}
+
+.checkboxSection.hasError {
+    border-color: #fca5a5;
+    background-color: #fef2f2;
+}
+
+.checkboxSection.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Checkbox Label */
+.checkboxLabel {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(8px, 2vw, 12px);
+    cursor: pointer;
+    user-select: none;
+    min-height: 44px;
+}
+
+.checkboxLabel.disabled {
+    cursor: not-allowed;
+}
+
+/* Native Checkbox */
+.checkbox {
+    width: clamp(18px, 4vw, 20px);
+    height: clamp(18px, 4vw, 20px);
+    min-width: 18px;
+    min-height: 18px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: var(--color-primary, #2563eb);
+    flex-shrink: 0;
+}
+
+.checkbox:disabled {
+    cursor: not-allowed;
+}
+
+/* Label Text */
+.labelText {
+    flex: 1;
+    font-size: clamp(14px, 3.5vw, 16px);
+    color: var(--text-primary, #111827);
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.required {
+    color: #dc2626;
+    margin-left: 4px;
+}
+
+/* Helper Text */
+.helperText {
+    font-size: clamp(12px, 3vw, 14px);
+    color: var(--text-secondary, #6b7280);
+    margin-left: clamp(24px, 5vw, 28px);
+    line-height: 1.4;
+}
+
+/* Error Message */
+.errorMessage {
+    font-size: clamp(12px, 3vw, 14px);
+    color: #dc2626;
+    margin-left: clamp(24px, 5vw, 28px);
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 374px) {
+    .checkboxSection {
+        padding: 10px;
+    }
+
+    .checkboxLabel {
+        gap: 8px;
+        min-height: 40px;
+    }
+
+    .checkbox {
+        width: 18px;
+        height: 18px;
+    }
+
+    .labelText {
+        font-size: 14px;
+    }
+
+    .helperText,
+    .errorMessage {
+        font-size: 12px;
+        margin-left: 26px;
+    }
+}
+
+@media (min-width: 375px) and (max-width: 640px) {
+    .checkboxSection {
+        padding: 12px 14px;
+    }
+
+    .checkboxLabel {
+        min-height: 44px;
+    }
+
+    .checkbox {
+        width: 20px;
+        height: 20px;
+    }
+
+    .labelText {
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .checkboxSection {
+        padding: 14px 16px;
+    }
+
+    .labelText {
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .checkboxSection {
+        padding: 16px;
+    }
+
+    .labelText {
+        font-size: 16px;
+    }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .checkboxSection {
+        padding: 10px 12px;
+    }
+
+    .checkboxLabel {
+        min-height: 36px;
+    }
+
+    .labelText {
+        font-size: 14px;
+    }
+}

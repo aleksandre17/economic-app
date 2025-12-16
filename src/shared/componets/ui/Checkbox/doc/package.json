@@ -1,0 +1,24 @@
+{
+  "name": "checkbox-components",
+  "version": "1.0.0",
+  "description": "Professional checkbox component library for React with React Hook Form integration",
+  "author": "",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "checkbox",
+    "form",
+    "react-hook-form",
+    "typescript",
+    "components"
+  ],
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-hook-form": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

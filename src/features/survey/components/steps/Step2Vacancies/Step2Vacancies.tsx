@@ -1,63 +1,55 @@
-import React, { useState } from 'react';
-import { useStepNavigation } from '../../../hooks/useStepNavigation.tsx';
-import { Step2Provider, useStep2, type VacancyEntry } from './context/Step2Context';
-import { Card } from '../../../../../shared/componets/ui/Card/Card';
-import { Button } from '../../../../../shared/componets/ui/Button/Button';
-import { Input } from '../../../../../shared/componets/ui/Input/Input';
-import { StepNavigation } from '../../navigation/StepNavigation/StepNavigation';
-import { AddVacancyModal } from './components/AddVacancyModal/AddVacancyModal';
+// Step2Vacancies.tsx
+import React from 'react';
+import { Card } from '@/shared/componets/ui/Card/Card';
+import { Button } from '@/shared/componets/ui/Button/Button';
+import { Input } from '@/shared/componets/ui/Input/Input';
+import { useSurvey } from '@features/survey/context/surveyContext.tsx';
+import { useForm  } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {Step2Data, step2Schema} from '@features/survey/schemas';
 import { VacanciesTable } from './components/VacanciesTable/VacanciesTable';
+import type {VacancyEntry} from '@features/survey/types/survey.types';
+import TrueFalseRadio from "@/shared/componets/ui/TrueFalseRadio/TrueFalseRadio.tsx";
+import {StepProps} from "@features/survey/config";
+
 import styles from './Step2Vacancies.module.css';
 
-const Step2Content: React.FC = () => {
-    const { goToNextStep, goToPreviousStep, isFirstStep, isLastStep } = useStepNavigation();
+
+export const Step2Vacancies: React.FC<StepProps<Step2Data, VacancyEntry>> = ({
+    onOpenModal,
+    onSubmit,
+    onError
+}) => {
+    const { formData, updateFormData, updateField } = useSurvey();
+
     const {
-        hasVacancies2025,
-        vacancies2025Count,
-        setHasVacancies2025,
-        setVacancies2025Count,
-        entries,
-    } = useStep2();
+        register,
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm<Step2Data>({
+        resolver: zodResolver(step2Schema),
+        values: formData,
+    });
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingEntry, setEditingEntry] = useState<VacancyEntry | null>(null);
+    const hasVacancies2025 = formData.hasVacancies2025;
+    const vacancies2025Count = formData.vacancies2025Count;
+    const entries = formData.vacancyEntries || [];
 
-    // გამოჩნდება თუ დიახ + რაოდენობა მითითებული
     const showVacanciesSection = hasVacancies2025 && vacancies2025Count && vacancies2025Count > 0;
 
-    const handleNext = () => {
-        // თუ "დიახ" მაგრამ რაოდენობა არ არის
-        if (hasVacancies2025 && !vacancies2025Count) {
-            alert('გთხოვთ მიუთითოთ ვაკანსიების რაოდენობა');
-            return;
-        }
-
-        // თუ რაოდენობა მითითებული მაგრამ ჩანაწერები არ არის
-        if (showVacanciesSection && entries.length === 0) {
-            alert('გთხოვთ დაამატოთ მინიმუმ ერთი ჩანაწერი');
-            return;
-        }
-
-        goToNextStep();
-    };
-
-    const handleAdd = () => {
-        setEditingEntry(null);
-        setIsModalOpen(true);
-    };
-
     const handleEdit = (entry: VacancyEntry) => {
-        setEditingEntry(entry);
-        setIsModalOpen(true);
+        onOpenModal(entry);
     };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setEditingEntry(null);
+    const handleDelete = (id: string | number) => {
+        if (!confirm('ნამდვილად გსურთ წაშლა?')) return;
+        const filtered = entries.filter((e) => e.id !== id);
+        updateFormData({ vacancyEntries: filtered });
     };
 
     return (
-        <div className={styles.container}>
+        <form onSubmit={handleSubmit(onSubmit!, onError)} id="step-form">
             <Card>
                 <div className={styles.header}>
                     <h2>ინფორმაცია ვაკანსიების შესახებ</h2>
@@ -65,59 +57,36 @@ const Step2Content: React.FC = () => {
                 </div>
 
                 <div className={styles.form}>
-                    {/* კითხვა + რადიო ღილაკები */}
-                    <div className={styles.questionSection}>
-                        <label className={styles.questionLabel}>
-                            2025 წლის პერიოდში გქონდათ თუ არა ვაკანსიები?{' '}
-                            <span className={styles.required}>*</span>
-                        </label>
 
-                        <div className={styles.radioGroup}>
-                            <label className={styles.radioLabel}>
-                                <input
-                                    type="radio"
-                                    name="hasVacancies"
-                                    value="yes"
-                                    checked={hasVacancies2025 === true}
-                                    onChange={() => setHasVacancies2025(true)}
-                                    className={styles.radio}
-                                />
-                                <span>დიახ</span>
-                            </label>
+                    <TrueFalseRadio
+                        name="hasVacancies2025"
+                        control={control}
+                        label="2025 წლის პერიოდში გქონდათ თუ არა ვაკანსიები?"
+                        required={true}
+                        error={errors.hasVacancies2025?.message}
+                        onValueChange={(v) => {
+                            updateField('hasVacancies2025', v!);
+                        }}
+                    />
 
-                            <label className={styles.radioLabel}>
-                                <input
-                                    type="radio"
-                                    name="hasVacancies"
-                                    value="no"
-                                    checked={hasVacancies2025 === false}
-                                    onChange={() => setHasVacancies2025(false)}
-                                    className={styles.radio}
-                                />
-                                <span>არა</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    {/* თუ "დიახ" - რაოდენობის input */}
-                    {hasVacancies2025 && (
+                    {formData.hasVacancies2025 && (
                         <div className={styles.countSection}>
                             <Input
                                 label="მიუთითეთ ვაკანსიების რაოდენობა"
                                 type="number"
-                                value={vacancies2025Count?.toString() || ''}
-                                onChange={(e) => {
-                                    const value = e.target.value ? Number(e.target.value) : undefined;
-                                    setVacancies2025Count(value);
-                                }}
-                                placeholder="0"
-                                required
                                 fullWidth
+                                error={errors.vacancies2025Count?.message}
+                                {...register('vacancies2025Count', {
+                                    valueAsNumber: true,
+                                    onChange: (e) => {
+                                        const value = e.target.value ? Number(e.target.value) : undefined;
+                                        updateFormData({ vacancies2025Count: value });
+                                    }
+                                })}
                             />
                         </div>
                     )}
 
-                    {/* თუ რაოდენობა მითითებული - დამატების სექცია */}
                     {showVacanciesSection && (
                         <>
                             <div className={styles.divider} />
@@ -132,7 +101,7 @@ const Step2Content: React.FC = () => {
                                         </p>
                                     </div>
 
-                                    <Button variant="primary" onClick={handleAdd}>
+                                    <Button variant="primary" onClick={() => onOpenModal()} type="button">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                                             <path
                                                 d="M9 3.5v11M3.5 9h11"
@@ -146,34 +115,28 @@ const Step2Content: React.FC = () => {
                                 </div>
 
                                 <div className={styles.tableSection}>
-                                    <VacanciesTable onEdit={handleEdit} />
+                                    <VacanciesTable
+                                        entries={entries}
+                                        onEdit={handleEdit}
+                                        onDelete={handleDelete}
+                                    />
                                 </div>
+
+                                {entries.length > 0 && (
+                                    <div className={styles.info}>
+                                        ✓ {entries.length} ჩანაწერი დამატებულია
+                                    </div>
+                                )}
                             </div>
                         </>
                     )}
+
+                    {errors.vacancyEntries && (
+                        <div className={styles.error}>{errors.vacancyEntries.message as string}</div>
+                    )}
+
                 </div>
-
-                <StepNavigation
-                    onBack={goToPreviousStep}
-                    onNext={handleNext}
-                    isFirstStep={isFirstStep}
-                    isLastStep={isLastStep}
-                />
             </Card>
-
-            <AddVacancyModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                editEntry={editingEntry}
-            />
-        </div>
-    );
-};
-
-export const Step2Vacancies: React.FC = () => {
-    return (
-        <Step2Provider>
-            <Step2Content />
-        </Step2Provider>
+        </form>
     );
 };

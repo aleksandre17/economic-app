@@ -121,3 +121,41 @@
         align-self: stretch;
     }
 }
+
+
+/* Info Section */
+.info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #ecfdf5;
+    border: 1px solid #10b981;
+    border-radius: 8px;
+    color: #065f46;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 16px;
+}
+
+.info::before {
+    content: '✓';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #10b981;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .info {
+        font-size: 13px;
+        padding: 10px 14px;
+    }
+}

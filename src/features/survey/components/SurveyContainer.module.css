@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   Survey Container - Split Layout
+   Survey Container - With Global Navigation
    ═══════════════════════════════════════════════════════════ */
 
 .surveyWrapper {
@@ -9,11 +9,11 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Gradient Banner - Short & Compact
+   Gradient Banner - Short & Compact (Optional - can remove)
    ═══════════════════════════════════════════════════════════ */
 
 .gradientBanner {
-    background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
     padding: var(--spacing-lg) 0;
     position: relative;
     overflow: hidden;
@@ -27,9 +27,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image:
-            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    background-image: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
     pointer-events: none;
 }
 
@@ -46,7 +45,6 @@
     font-size: var(--text-2xl);
     font-weight: var(--font-bold);
     color: white;
-    /*margin-bottom: var(--spacing-xs);*/
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -58,7 +56,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Controls Section - White Background
+   Controls Section - White Background (Progress & Steps)
    ═══════════════════════════════════════════════════════════ */
 
 .controlsSection {
@@ -82,16 +80,50 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Content Section
+   Content Section - ✅ Updated with padding for navigation
    ═══════════════════════════════════════════════════════════ */
 
 .content {
     flex: 1;
     background: var(--bg-secondary);
     padding: var(--spacing-lg) 0;
+    padding-bottom: 120px; /* ✅ Space for fixed navigation */
 }
 
+/* ═══════════════════════════════════════════════════════════
+   Navigation Wrapper - ✅ NEW: Fixed at bottom
+   ═══════════════════════════════════════════════════════════ */
 
+.navigationWrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-primary);
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05), 0 -2px 4px -1px rgba(0, 0, 0, 0.03);
+    padding: var(--spacing-lg) 0;
+    z-index: 50;
+    animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Alternative: Static navigation (not fixed) */
+.navigationWrapper.static {
+    position: static;
+    margin-top: var(--spacing-xl);
+    animation: none;
+}
 
 /* ═══════════════════════════════════════════════════════════
    Loading State
@@ -155,10 +187,11 @@
 
     .content {
         padding: var(--spacing-xl) 0;
+        padding-bottom: 110px; /* ✅ Adjusted for tablet */
     }
 
-    .stepContent {
-        padding: var(--spacing-xl);
+    .navigationWrapper {
+        padding: var(--spacing-md) 0;
     }
 }
 
@@ -190,10 +223,62 @@
 
     .content {
         padding: var(--spacing-lg) 0;
+        padding-bottom: 100px; /* ✅ Adjusted for mobile */
     }
 
-    .stepContent {
-        padding: var(--spacing-lg);
-        border-radius: var(--radius-md);
+    .navigationWrapper {
+        padding: 12px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .content {
+        padding: var(--spacing-md) 0;
+        padding-bottom: 90px; /* ✅ Smaller padding for small screens */
+    }
+
+    .navigationWrapper {
+        padding: 10px 0;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Print Styles
+   ═══════════════════════════════════════════════════════════ */
+
+@media print {
+    .navigationWrapper {
+        display: none;
+    }
+
+    .content {
+        padding-bottom: var(--spacing-lg);
+    }
+
+    .gradientBanner {
+        background: #4f46e5;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Accessibility
+   ═══════════════════════════════════════════════════════════ */
+
+/* Focus visible for navigation */
+.navigationWrapper:focus-within {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .navigationWrapper {
+        animation: none;
+    }
+
+    .spinner {
+        animation-duration: 1.2s;
     }
 }

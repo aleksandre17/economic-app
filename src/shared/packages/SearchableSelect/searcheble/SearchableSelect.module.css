@@ -1,0 +1,329 @@
+/* src/shared/components/SearchableSelect/SearchableSelect.module.css */
+
+.container {
+    position: relative;
+    width: 100%;
+}
+
+/* Label */
+.label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.required {
+    color: #ef4444;
+    margin-left: 4px;
+}
+
+/* Select Button */
+.selectButton {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.selectButton:hover:not(:disabled) {
+    border-color: #9ca3af;
+}
+
+.selectButton:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.selectButtonOpen {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.selectButtonError {
+    border-color: #ef4444;
+}
+
+.selectButtonError:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.selectButtonDisabled {
+    background-color: #f9fafb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Selected Value */
+.selectedValue {
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.placeholder {
+    color: #9ca3af;
+}
+
+/* Arrow */
+.arrow {
+    margin-left: 8px;
+    font-size: 10px;
+    color: #6b7280;
+    transition: transform 0.2s ease;
+}
+
+.arrowOpen {
+    transform: rotate(180deg);
+}
+
+/* Dropdown */
+.dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    max-height: 300px;
+    display: flex;
+    flex-direction: column;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Search Container */
+.searchContainer {
+    position: relative;
+    padding: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 8px 32px 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #374151;
+    transition: border-color 0.2s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.searchInput::placeholder {
+    color: #9ca3af;
+}
+
+.searchIcon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+/* Options List */
+.optionsList {
+    overflow-y: auto;
+    max-height: 240px;
+    padding: 4px;
+}
+
+/* Scrollbar Styling */
+.optionsList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.optionsList::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 3px;
+}
+
+.optionsList::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+.optionsList::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Option Header (Parent) */
+.optionHeader {
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 4px;
+    cursor: default;
+}
+
+/* Option */
+.option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.option:hover:not(.optionDisabled) {
+    background-color: #f3f4f6;
+}
+
+.optionFocused {
+    background-color: #eff6ff;
+}
+
+.optionSelected {
+    background-color: #dbeafe;
+    color: #1e40af;
+    font-weight: 500;
+}
+
+.optionDisabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Option Content */
+.optionName {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.optionCode {
+    margin-left: 8px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.checkmark {
+    margin-left: 8px;
+    color: #3b82f6;
+    font-weight: bold;
+}
+
+/* No Results */
+.noResults {
+    padding: 20px 12px;
+    text-align: center;
+    font-size: 14px;
+    color: #9ca3af;
+}
+
+/* Error Message */
+.error {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .dropdown {
+        max-height: 250px;
+    }
+
+    .optionsList {
+        max-height: 190px;
+    }
+}
+
+/* Dark Mode Support (Optional) */
+/*@media (prefers-color-scheme: dark) {*/
+/*    .selectButton {*/
+/*        background-color: #1f2937;*/
+/*        border-color: #374151;*/
+/*        color: #f3f4f6;*/
+/*    }*/
+
+/*    .selectButton:hover:not(:disabled) {*/
+/*        border-color: #4b5563;*/
+/*    }*/
+
+/*    .selectButtonDisabled {*/
+/*        background-color: #111827;*/
+/*        color: #6b7280;*/
+/*    }*/
+
+/*    .dropdown {*/
+/*        background-color: #1f2937;*/
+/*        border-color: #374151;*/
+/*    }*/
+
+/*    .searchInput {*/
+/*        background-color: #111827;*/
+/*        border-color: #374151;*/
+/*        color: #f3f4f6;*/
+/*    }*/
+
+/*    .optionHeader {*/
+/*        background-color: #111827;*/
+/*        border-color: #374151;*/
+/*        color: #9ca3af;*/
+/*    }*/
+
+/*    .option {*/
+/*        color: #f3f4f6;*/
+/*    }*/
+
+/*    .option:hover:not(.optionDisabled) {*/
+/*        background-color: #374151;*/
+/*    }*/
+
+/*    .optionFocused {*/
+/*        background-color: #1e3a8a;*/
+/*    }*/
+
+/*    .optionSelected {*/
+/*        background-color: #1e40af;*/
+/*        color: #dbeafe;*/
+/*    }*/
+
+/*    .label {*/
+/*        color: #f3f4f6;*/
+/*    }*/
+/*}*/

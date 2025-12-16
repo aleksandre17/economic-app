@@ -1,0 +1,108 @@
+/* shared/components/ui/Notification/Notification.module.css */
+
+.notification {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    line-height: 1.5;
+    min-width: 320px;
+    max-width: 480px;
+    animation: slideIn 0.3s ease-out;
+    background: white;
+    border-left: 4px solid;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.message {
+    flex: 1;
+    color: #1f2937;
+}
+
+.dismiss {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    color: #6b7280;
+    transition: color 0.2s;
+}
+
+.dismiss:hover {
+    color: #1f2937;
+}
+
+/* Success */
+.success {
+    border-color: #10b981;
+}
+
+.success .icon {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+/* Error */
+.error {
+    border-color: #ef4444;
+}
+
+.error .icon {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+/* Warning */
+.warning {
+    border-color: #f59e0b;
+}
+
+.warning .icon {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+/* Info */
+.info {
+    border-color: #3b82f6;
+}
+
+.info .icon {
+    background-color: #dbeafe;
+    color: #2563eb;
+}

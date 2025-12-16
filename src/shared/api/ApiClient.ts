@@ -210,6 +210,21 @@ class ApiClient {
         return token !== null;
     }
 
+    public isLoginPageAll() {
+        // check pathname (handles /login and /app/.../login and trailing slash)
+        const path = (window.location.pathname || "").replace(/\/+$/, "");
+        if (path === "/login" || path.endsWith("/login")) return true;
+
+        // check hash (for hash routers)
+        const hash = (window.location.hash || "").replace(/^#+/, "").replace(/\/+$/, "");
+        if (hash === "/login" || hash.endsWith("/login")) return true;
+
+        // check href fallback (covers login appearing in query or weird setups)
+        if (window.location.href.includes("/login")) return true;
+
+        return false;
+    }
+
     /**
      * ⭐ Handle Unauthorized (401) - Logout and redirect
      */
@@ -217,15 +232,17 @@ class ApiClient {
         removeToken();
         this.stopTokenExpiryCheck();
 
-        // Dispatch custom event for logout
-        window.dispatchEvent(new CustomEvent('auth:logout', {
-            detail: { reason: 'token_expired' }
-        }));
+        if (!this.isLoginPageAll()) {
+            // Dispatch custom event for logout
+            window.dispatchEvent(new CustomEvent('auth:logout', {
+                detail: { reason: 'token_expired' }
+            }));
 
-        // Redirect to login
-        if (typeof window !== 'undefined') {
-            console.log('🚪 Redirecting to login...');
-            window.location.href = '/login';
+            // Redirect to login
+            if (typeof window !== 'undefined') {
+                console.log('🚪 Redirecting to login...');
+                window.location.href = '/login';
+            }
         }
     }
 
@@ -330,7 +347,7 @@ class ApiClient {
 // Create and Export API Client Instance
 // ═══════════════════════════════════════════════════════════
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8087/api';
 
 export const apiClient = new ApiClient({
     baseURL: API_BASE_URL,

@@ -175,3 +175,50 @@
         padding: 4px 8px;
     }
 }
+
+/* Step5Review.module.css - დაამატე error styles */
+.errorSection {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.errorSection h4 {
+    color: #991b1b;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+}
+
+.errorList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.errorList li {
+    color: #dc2626;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.errorList li:hover {
+    background-color: #fee2e2;
+}
+
+.statusBadge {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #dbeafe;
+    color: #1e40af;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 8px;
+}

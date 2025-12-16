@@ -1,10 +1,10 @@
 import React from 'react';
 import {Navigate, Outlet} from 'react-router-dom';
-import { useAuth } from '../../../../features/auth/context/AuthContext.tsx';
+import { useAuth } from '@features/auth/context/AuthContext.tsx';
 import styles from "../ProtectedRoute/ProtectedRoute.module.css";
 
 interface PublicRouteProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     redirectTo?: string; // Default: '/survey'
 }
 
@@ -17,7 +17,7 @@ interface PublicRouteProps {
  * Usage:
  * <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
  */
-export const PublicRoute: React.FC<PublicRouteProps> = ({ children, redirectTo = '/survey' }) => {
+export const PublicRoute: React.FC<PublicRouteProps> = ({redirectTo = '/survey' }) => {
     const { isAuthenticated, isLoading } = useAuth();
 
     // Show loading while checking auth

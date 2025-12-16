@@ -1,0 +1,105 @@
+/* components/Checkbox/Checkbox.module.css */
+
+.checkboxWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-primary);
+}
+
+/* ✅ Checkbox Section - individual box with background */
+.checkboxSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-primary);
+}
+
+.checkboxSection:hover:not(.disabled) {
+    border-color: #d1d5db;
+}
+
+.checkboxSection.hasError {
+    border-color: #fca5a5;
+    background-color: #fef2f2;
+}
+
+.checkboxSection.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ✅ Checkbox Label */
+.checkboxLabel {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkboxLabel.disabled {
+    cursor: not-allowed;
+}
+
+/* ✅ Native Checkbox - styled with accent-color */
+.checkbox {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.checkbox:disabled {
+    cursor: not-allowed;
+}
+
+/* ✅ Label Text */
+.labelText {
+    flex: 1;
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.required {
+    color: #dc2626;
+    margin-left: 4px;
+}
+
+/* Helper text */
+.helperText {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-left: 28px;
+    line-height: 1.4;
+}
+
+/* Error message */
+.errorMessage {
+    font-size: var(--text-sm);
+    color: #dc2626;
+    margin-left: 28px;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .labelText {
+        font-size: 15px;
+    }
+
+    .helperText,
+    .errorMessage {
+        font-size: 13px;
+    }
+}

@@ -1,7 +1,10 @@
 import { create } from "zustand";
-import {SurveyFormData, surveySchema} from "@features/survey/schemas/surveySchema.ts";
-import {createJSONStorage, persist} from "zustand/middleware/persist";
+import {createJSONStorage, persist} from "zustand/middleware";
 import { surveyApi } from '../api/surveyapi';
+
+import {surveySchema} from "@features/survey/schemas";
+import {schemaToEmptyTypedObjectDeep} from "@features/survey/utils";
+import {SurveyFormData} from "@features/survey/types/survey.types.ts";
 
 // export const useSurveyFormStore = create<{
 //   formData: Partial<SurveyFormData>;
@@ -12,11 +15,16 @@ import { surveyApi } from '../api/surveyapi';
 // }));
 
 
-const TOTAL_STEPS = 5;
+export const TOTAL_STEPS = 5;
 export const STORAGE_KEY = 'survey-form-data';
 
 
-const useSurveyStore = create<{
+const withNulls = <T extends object>(obj: T): T =>
+    Object.fromEntries(
+        Object.entries(obj).map(([k, v]) => [k, v ?? null])
+    ) as T;
+
+export const useSurveyStore = create<{
   formData: Partial<SurveyFormData>;
   currentStep: number;
   isLoading: boolean;
@@ -34,7 +42,7 @@ const useSurveyStore = create<{
 }>()(
     persist((set, get) => ({
           // State
-          formData: surveySchema.parse({}),
+          formData: schemaToEmptyTypedObjectDeep(surveySchema),
           currentStep: 1,
           isLoading: false,
           isSubmitting: false,
@@ -48,7 +56,7 @@ const useSurveyStore = create<{
 
           updateFormData: (data) => {
             set((state) => {
-              const updated = { ...state.formData, ...data };
+              const updated = { ...state.formData, ...withNulls(data) };
               console.log('🔄 Updating formData:', data, '→ Result:', updated);
               return { formData: updated };
             });
@@ -67,9 +75,9 @@ const useSurveyStore = create<{
           resetForm: () => {
             console.log('🔄 Resetting form');
             set({
-              formData: surveySchema.parse({}),
+              //formData: surveySchema.parse({}),
               currentStep: 1,
-              surveyId: null,
+              //surveyId: null,
             });
             localStorage.removeItem(STORAGE_KEY);
           },
@@ -94,7 +102,7 @@ const useSurveyStore = create<{
 
                 set((state) => ({
                   formData: {
-                    ...surveySchema.parse({}),
+                    ...schemaToEmptyTypedObjectDeep(surveySchema),
                     ...state.formData,
                     ...apiData,
                   },

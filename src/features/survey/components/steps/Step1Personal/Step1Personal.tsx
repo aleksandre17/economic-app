@@ -1,56 +1,71 @@
-import React, { useState } from 'react';
-import { useStepNavigation } from '../../../hooks/useStepNavigation.tsx';
-import { Step1Provider, useStep1, type HREntry } from './context/Step1Context';
-import { Card } from '../../../../../shared/componets/ui/Card/Card';
-import { Button } from '../../../../../shared/componets/ui/Button/Button';
-import { StepNavigation } from '../../navigation/StepNavigation/StepNavigation';
-import { AddEntryModal } from './components/AddEntryModal/AddEntryModal';
+import type { FC } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Card } from '@/shared/componets/ui/Card/Card';
+import { Button } from '@/shared/componets/ui/Button/Button';
 import { EntriesTable } from './components/EntriesTable/EntriesTable';
+import { useSurvey } from '@features/survey/context/surveyContext.tsx';
+import {Step1Data, step1Schema} from '@features/survey/schemas';
+import {HREntry} from '@features/survey/types/survey.types';
 import styles from './Step1Personal.module.css';
+import { StepProps } from "@features/survey/config";
 
-const Step1Content: React.FC = () => {
-    const { goToNextStep, isFirstStep, isLastStep } = useStepNavigation();
-    const { entries } = useStep1();
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingEntry, setEditingEntry] = useState<HREntry | null>(null);
+/**
+ * Step1Personal - For Option B (Global Navigation)
+ *
+ * ✅ No navigation inside
+ * ✅ Clean component
+ * ✅ Receives onOpenModal from parent
+ * ✅ Updates context on every change
+ */
+export const Step1Personal: FC<StepProps<Step1Data, HREntry>> = ({
+   onOpenModal,
+   onSubmit,
+   onError
+}) => {
+    // ═══════════════════════════════════════════════════════════
+    const { formData, updateFormData } = useSurvey();
+    const {
+        handleSubmit,
+        formState: { errors },
+        setValue,
+    } = useForm<Step1Data>({
+        resolver: zodResolver(step1Schema),
+        values: formData
+    });
 
-    const handleNext = () => {
-        if (entries.length === 0) {
-            alert('გთხოვთ დაამატოთ მინიმუმ ერთი ჩანაწერი');
-            return;
-        }
-        goToNextStep();
-    };
-
-    const handleAdd = () => {
-        setEditingEntry(null);
-        setIsModalOpen(true);
-    };
+    // ═══════════════════════════════════════════════════════════
+    // Handlers
+    // ═══════════════════════════════════════════════════════════
 
     const handleEdit = (entry: HREntry) => {
-        setEditingEntry(entry);
-        setIsModalOpen(true);
+        onOpenModal(entry);
     };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setEditingEntry(null);
+    const handleDelete = (id: string | number) => {
+        if (!confirm('ნამდვილად გსურთ წაშლა?')) return;
+        const filtered = formData.hrEntries?.filter((e) => e.id !== id);
+        setValue('hrEntries', filtered);
+        // ✅ Update context immediately
+        updateFormData({ hrEntries: filtered });
     };
 
+    // ═══════════════════════════════════════════════════════════
+    // Render
+    // ═══════════════════════════════════════════════════════════
     return (
-        <div className={styles.container}>
+        <form onSubmit={handleSubmit(onSubmit!, onError)} id="step-form">
             <Card>
+                {/* Header */}
                 <div className={styles.header}>
                     <div>
                         <h2>დასაქმებულთა მონაცემები</h2>
                         <p>დაამატეთ დასაქმებულთა რაოდენობა კატეგორიების მიხედვით</p>
                     </div>
 
-                    <Button
-                        variant="primary"
-                        onClick={handleAdd}
-                    >
+                    {/* Add Button */}
+                    <Button variant="primary" onClick={() => onOpenModal()} type="button">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path
                                 d="M10 4v12M4 10h12"
@@ -63,31 +78,29 @@ const Step1Content: React.FC = () => {
                     </Button>
                 </div>
 
+                {/* Validation Error */}
+                {errors.hrEntries && (
+                    <div className={styles.error}>{errors.hrEntries.message as string}</div>
+                )}
+
+                {/* Entries Table */}
                 <div className={styles.tableSection}>
-                    <EntriesTable onEdit={handleEdit} />
+                    <EntriesTable
+                        entries={formData.hrEntries}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                    />
                 </div>
 
-                <StepNavigation
-                    onNext={handleNext}
-                    isFirstStep={isFirstStep}
-                    isLastStep={isLastStep}
-                    nextDisabled={entries.length === 0}
-                />
+                {/* Info */}
+                {formData.hrEntries && formData.hrEntries.length > 0 && (
+                    <div className={styles.info}>
+                        ✓ {formData.hrEntries.length} ჩანაწერი დამატებულია
+                    </div>
+                )}
+
+                {/* No navigation here - handled by global navigation */}
             </Card>
-
-            <AddEntryModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                editEntry={editingEntry}
-            />
-        </div>
-    );
-};
-
-export const Step1Personal: React.FC = () => {
-    return (
-        <Step1Provider>
-            <Step1Content />
-        </Step1Provider>
+        </form>
     );
 };

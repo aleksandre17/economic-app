@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header } from '../../../../../shared/componets/Header/Header';
+import { Header } from '@/shared/componets/Header/Header.tsx';
 import styles from './SurveyLayout.module.css';
 
 interface SurveyLayoutProps {

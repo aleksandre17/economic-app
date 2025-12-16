@@ -1,14 +1,29 @@
-import React from 'react';
-import { useStep2, type VacancyEntry } from '../../context/Step2Context';
-import { EMPLOYMENT_DURATION_OPTIONS } from '../../../../../types/survey.types';
+// VacanciesTable.tsx
+import React, {useCallback} from 'react';
+import type { VacancyEntry } from '@features/survey/types/survey.types';
+import {formatDuration} from "@features/survey/components/steps/share/Util.ts";
 import styles from './VacanciesTable.module.css';
+import {CLASSIFIER_KEYS, useClassifier} from "@/shared/packages/classifiers";
 
 interface VacanciesTableProps {
+    entries: VacancyEntry[];
     onEdit: (entry: VacancyEntry) => void;
+    onDelete: (id: string | number) => void;
 }
 
-export const VacanciesTable: React.FC<VacanciesTableProps> = ({ onEdit }) => {
-    const { entries, deleteEntry } = useStep2();
+
+export const VacanciesTable: React.FC<VacanciesTableProps> = ({
+                                                                  entries,
+                                                                  onEdit,
+                                                                  onDelete,
+                                                              }) => {
+
+    const classifier = useClassifier(CLASSIFIER_KEYS.CATEGORIES, { autoLoad: true });
+
+    const findClassifierByCode = useCallback((code: string) => {
+        const data = classifier.getData() || [];
+        return data.find(item => item.code === code)?.name || null;
+    }, [classifier]);
 
     if (entries.length === 0) {
         return (
@@ -17,22 +32,11 @@ export const VacanciesTable: React.FC<VacanciesTableProps> = ({ onEdit }) => {
                     <rect x="8" y="16" width="48" height="40" rx="4" stroke="currentColor" strokeWidth="2" opacity="0.3" />
                     <path d="M8 24h48M20 16v8M44 16v8" stroke="currentColor" strokeWidth="2" opacity="0.3" />
                 </svg>
-                <h3>ჯერ არ არის დამატებული ჩანაწერები</h3>
-                <p>დააჭირეთ "დამატება" ღილაკს ჩანაწერის დასამატებლად</p>
+                <h3>ჯერ არ არის დამატებული ვაკანსიები</h3>
+                <p>დააჭირეთ "დამატება" ღილაკს ვაკანსიის დასამატებლად</p>
             </div>
         );
     }
-
-    const handleDelete = (id: string) => {
-        if (window.confirm('დარწმუნებული ხართ რომ გსურთ ჩანაწერის წაშლა?')) {
-            deleteEntry(id);
-        }
-    };
-
-    const getDurationLabel = (value: string) => {
-        const option = EMPLOYMENT_DURATION_OPTIONS.find((opt) => opt.value === value);
-        return option?.label || value;
-    };
 
     return (
         <div className={styles.container}>
@@ -44,29 +48,29 @@ export const VacanciesTable: React.FC<VacanciesTableProps> = ({ onEdit }) => {
                         <th>არსებული</th>
                         <th>გამოცხადებული</th>
                         <th>შეუვსებელი</th>
-                        <th>ხანგრძლივობა</th>
-                        <th></th>
+                        <th>დასაქმების ხანგრძლივობა</th>
+                        <th>მოქმედებები</th>
                     </tr>
                     </thead>
                     <tbody>
                     {entries.map((entry) => (
                         <tr key={entry.id}>
-                            <td className={styles.category}>{entry.category}</td>
+                            <td className={styles.category}>{findClassifierByCode(entry.category)}</td>
                             <td className={styles.number}>{entry.totalVacancies}</td>
                             <td className={styles.number}>{entry.announcedVacancies}</td>
                             <td className={styles.number}>{entry.unfilledVacancies}</td>
-                            <td className={styles.duration}>
-                                {getDurationLabel(entry.employmentDuration)}
+                            <td><div className={styles.number}>{formatDuration(entry.employmentDuration)}</div>
                             </td>
                             <td className={styles.actions}>
                                 <button
+                                    type="button"
                                     className={styles.editButton}
                                     onClick={() => onEdit(entry)}
                                     title="რედაქტირება"
                                 >
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path
-                                            d="M11.333 2A1.886 1.886 0 0114 4.667l-9 9-3.667.666.667-3.666 9-9z"
+                                            d="M11.333 2A1.886 1.886 0 0114 4.667l-9 9-3.667.667.667-3.667 9-9z"
                                             stroke="currentColor"
                                             strokeWidth="1.5"
                                             strokeLinecap="round"
@@ -76,8 +80,9 @@ export const VacanciesTable: React.FC<VacanciesTableProps> = ({ onEdit }) => {
                                 </button>
                                 <button
                                     className={styles.deleteButton}
-                                    onClick={() => handleDelete(entry.id)}
+                                    onClick={() => onDelete(entry.id)}
                                     title="წაშლა"
+                                    type="button"
                                 >
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path
@@ -105,14 +110,20 @@ export const VacanciesTable: React.FC<VacanciesTableProps> = ({ onEdit }) => {
                 <div className={styles.summaryItem}>
                     <span className={styles.summaryLabel}>სულ არსებული ვაკანსიები:</span>
                     <span className={styles.summaryValue}>
-            {entries.reduce((sum, e) => sum + e.totalVacancies, 0)}
-          </span>
+                        {entries.reduce((sum, e) => sum + e.totalVacancies, 0)}
+                    </span>
+                </div>
+                <div className={styles.summaryItem}>
+                    <span className={styles.summaryLabel}>სულ გამოცხადებული:</span>
+                    <span className={styles.summaryValue}>
+                        {entries.reduce((sum, e) => sum + e.announcedVacancies, 0)}
+                    </span>
                 </div>
                 <div className={styles.summaryItem}>
                     <span className={styles.summaryLabel}>სულ შეუვსებელი:</span>
                     <span className={styles.summaryValue}>
-            {entries.reduce((sum, e) => sum + e.unfilledVacancies, 0)}
-          </span>
+                        {entries.reduce((sum, e) => sum + e.unfilledVacancies, 0)}
+                    </span>
                 </div>
             </div>
         </div>

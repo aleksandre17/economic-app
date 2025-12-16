@@ -1,13 +1,31 @@
-import React from 'react';
-import { useStep3, type GrowthPlanEntry } from '../../context/Step3Context';
+// GrowthTable.tsx
+import React, {useCallback} from 'react';
+import type { GrowthPlanEntry } from '@features/survey/types/survey.types';
+import {CLASSIFIER_KEYS, useClassifier} from "@/shared/packages/classifiers";
 import styles from './GrowthTable.module.css';
 
 interface GrowthTableProps {
+    entries: GrowthPlanEntry[];
     onEdit: (entry: GrowthPlanEntry) => void;
+    onDelete: (id: string | number) => void;
+    planOneYearGrowth: boolean | null;
+    planFiveYearGrowth: boolean | null;
 }
 
-export const GrowthTable: React.FC<GrowthTableProps> = ({ onEdit }) => {
-    const { entries, deleteEntry, planOneYearGrowth, planFiveYearGrowth } = useStep3();
+export const GrowthTable: React.FC<GrowthTableProps> = ({
+    entries,
+    onEdit,
+    onDelete,
+    planOneYearGrowth,
+    planFiveYearGrowth,
+}) => {
+
+    const classifier = useClassifier(CLASSIFIER_KEYS.CATEGORIES, { autoLoad: true });
+
+    const findClassifierByCode = useCallback((code: string | number) => {
+        const data = classifier.getData() || [];
+        return data.find(item => item.code === code)?.name || null;
+    }, [classifier]);
 
     if (entries.length === 0) {
         return (
@@ -20,13 +38,7 @@ export const GrowthTable: React.FC<GrowthTableProps> = ({ onEdit }) => {
                 <p>დააჭირეთ "დამატება" ღილაკს ჩანაწერის დასამატებლად</p>
             </div>
         );
-    };
-
-    const handleDelete = (id: string) => {
-        if (window.confirm('დარწმუნებული ხართ რომ გსურთ ჩანაწერის წაშლა?')) {
-            deleteEntry(id);
-        }
-    };
+    }
 
     return (
         <div className={styles.container}>
@@ -35,30 +47,31 @@ export const GrowthTable: React.FC<GrowthTableProps> = ({ onEdit }) => {
                     <thead>
                     <tr>
                         <th>პროფესიული ჯგუფი</th>
-                        {planOneYearGrowth && <th>1 წლის ზრდა</th>}
-                        {planFiveYearGrowth && <th>5 წლის ზრდა</th>}
+                        {planOneYearGrowth && <th>1 წლის<br/>ზრდა</th>}
+                        {planFiveYearGrowth && <th>5 წლის<br/>ზრდა</th>}
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     {entries.map((entry) => (
                         <tr key={entry.id}>
-                            <td className={styles.category}>{entry.category}</td>
+                            <td className={styles.category}>{findClassifierByCode(entry.category)}</td>
                             {planOneYearGrowth && (
-                                <td className={styles.number}>{entry.oneYearGrowth || '-'}</td>
+                                <td className={styles.number}>{entry.oneYearGrowth ?? '-'}</td>
                             )}
                             {planFiveYearGrowth && (
-                                <td className={styles.number}>{entry.fiveYearGrowth || '-'}</td>
+                                <td className={styles.number}>{entry.fiveYearGrowth ?? '-'}</td>
                             )}
                             <td className={styles.actions}>
                                 <button
+                                    type="button"
                                     className={styles.editButton}
                                     onClick={() => onEdit(entry)}
                                     title="რედაქტირება"
                                 >
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path
-                                            d="M11.333 2A1.886 1.886 0 0114 4.667l-9 9-3.667.666.667-3.666 9-9z"
+                                            d="M11.333 2A1.886 1.886 0 0114 4.667l-9 9-3.667.667.667-3.667 9-9z"
                                             stroke="currentColor"
                                             strokeWidth="1.5"
                                             strokeLinecap="round"
@@ -68,8 +81,9 @@ export const GrowthTable: React.FC<GrowthTableProps> = ({ onEdit }) => {
                                 </button>
                                 <button
                                     className={styles.deleteButton}
-                                    onClick={() => handleDelete(entry.id)}
+                                    onClick={() => onDelete(entry.id)}
                                     title="წაშლა"
+                                    type="button"
                                 >
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path
@@ -86,6 +100,29 @@ export const GrowthTable: React.FC<GrowthTableProps> = ({ onEdit }) => {
                     ))}
                     </tbody>
                 </table>
+            </div>
+
+            <div className={styles.summary}>
+                <div className={styles.summaryItem}>
+                    <span className={styles.summaryLabel}>სულ ჩანაწერები:</span>
+                    <span className={styles.summaryValue}>{entries.length}</span>
+                </div>
+                {planOneYearGrowth && (
+                    <div className={styles.summaryItem}>
+                        <span className={styles.summaryLabel}>სულ 1 წლის ზრდა:</span>
+                        <span className={styles.summaryValue}>
+                            {entries.reduce((sum, e) => sum + (e.oneYearGrowth || 0), 0)}
+                        </span>
+                    </div>
+                )}
+                {planFiveYearGrowth && (
+                    <div className={styles.summaryItem}>
+                        <span className={styles.summaryLabel}>სულ 5 წლის ზრდა:</span>
+                        <span className={styles.summaryValue}>
+                            {entries.reduce((sum, e) => sum + (e.fiveYearGrowth || 0), 0)}
+                        </span>
+                    </div>
+                )}
             </div>
         </div>
     );

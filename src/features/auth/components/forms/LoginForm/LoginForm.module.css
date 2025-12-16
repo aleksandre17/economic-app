@@ -76,3 +76,102 @@
     color: var(--text-tertiary);
     font-size: var(--text-xs);
 }
+
+/* LoginPage.module.css */
+
+/* ... existing styles ... */
+
+/* ═══════════════════════════════════════════════════════════
+   Help Section with Download Link
+   ═══════════════════════════════════════════════════════════ */
+
+.helpSection {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border-primary);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.downloadLink {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-primary);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.downloadLink:hover {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+}
+
+.downloadLink:active {
+    transform: translateY(0);
+}
+
+.downloadLink svg {
+    color: var(--color-primary);
+    transition: transform var(--transition-fast);
+}
+
+.downloadLink:hover svg {
+    transform: translateY(2px);
+}
+
+/* Password wrapper with show/hide button */
+.passwordWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.showPasswordBtn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: color var(--transition-fast);
+    border-radius: var(--radius-sm);
+}
+
+.showPasswordBtn:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+.showPasswordBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .helpSection {
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+    }
+
+    .downloadLink {
+        font-size: 13px;
+        padding: 10px 14px;
+    }
+}

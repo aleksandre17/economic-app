@@ -60,7 +60,7 @@ export class ApiClientExtended {
         const formData = new FormData();
 
         files.forEach((file, index) => {
-            formData.append(`files`, file); // or `files[${index}]`
+            formData.append(`files`, file); // or `files[${index.ts}]`
         });
 
         if (metadata) {

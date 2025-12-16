@@ -1,0 +1,83 @@
+/* components/Checkbox/SearchableCheckboxGroup.module.css */
+
+.searchableGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Search Input */
+.searchInput {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #111827;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.searchInput::placeholder {
+    color: #9ca3af;
+}
+
+.searchInput:hover {
+    border-color: #9ca3af;
+}
+
+.searchInput:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.searchInput:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Results Count */
+.resultsCount {
+    font-size: 14px;
+    color: #6b7280;
+    padding: 4px 8px;
+    background-color: #f9fafb;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+}
+
+/* No Results */
+.noResults {
+    padding: 24px;
+    text-align: center;
+    color: #6b7280;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 1px dashed #d1d5db;
+}
+
+.noResults::before {
+    content: "🔍";
+    display: block;
+    font-size: 32px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .searchInput {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .resultsCount {
+        font-size: 13px;
+    }
+}

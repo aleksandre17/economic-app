@@ -1,13 +1,13 @@
 export interface User {
     id: number;
     email: string;
-    name: string;
+    designation?: string;
+    fullName: string;
     role: 'user' | 'admin';
     avatar?: string;
 }
 
 export interface LoginCredentials {
-    username: string;
     email: string;
     password: string;
     rememberMe?: boolean;
