@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { booleanField, nonNegativeInt } from '../primitives';
-import { vacancyEntrySchema } from '../entries/vacancyEntry.schema';
+import { vacancyEntrySchema } from '@features/survey/schemas';
 import { checkDuplicateCategories } from '../validators';
 
 /**
@@ -19,7 +19,7 @@ export const step2Schema = z
             required_error: `გთხოვთ უპასხოთ: 2025 წლის პერიოდში გქონდათ თუ არა ვაკანსიები?`,
             invalid_type_error: `გთხოვთ უპასხოთ: 2025 წლის პერიოდში გქონდათ თუ არა ვაკანსიები?`,
         }),
-        vacancies2025Count: nonNegativeInt(10000, 'ვაკანსიების რაოდენობა').refine(
+        vacancies2025Count: nonNegativeInt(1000000, 'ვაკანსიების რაოდენობა').refine(
             (v) => v == null || v >= 1,
             { message: 'რაოდენობა უნდა იყოს მინიმუმ 1' }
         ),

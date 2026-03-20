@@ -12,8 +12,8 @@ export const reductionPlanEntrySchema = z
     .object({
         id: idField,
         category: categoryField,
-        oneYearReduction: nonNegativeInt(10000, '1 წლის შემცირება'),
-        fiveYearReduction: nonNegativeInt(50000, '5 წლის შემცირება'),
+        oneYearReduction: nonNegativeInt(10000000, '1 წლის შემცირება'),
+        fiveYearReduction: nonNegativeInt(10000000, '5 წლის შემცირება'),
     })
     .superRefine((data, ctx) => {
         if ((data.oneYearReduction ?? 0) === 0 && (data.fiveYearReduction ?? 0) === 0) {

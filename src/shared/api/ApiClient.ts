@@ -347,7 +347,7 @@ class ApiClient {
 // Create and Export API Client Instance
 // ═══════════════════════════════════════════════════════════
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8087/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://survey-moesdapi.geostat.ge/api';
 
 export const apiClient = new ApiClient({
     baseURL: API_BASE_URL,

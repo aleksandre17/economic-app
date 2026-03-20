@@ -1,0 +1,7 @@
+services:
+  economic-app:
+    image: economic-app
+    container_name: economic-app
+    build:
+      context: .
+      dockerfile: src/Dockerfile

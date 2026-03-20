@@ -1,37 +1,24 @@
 // src/features/classifiers/api/apiClient.ts
 
-/**
- * HTTP client for API requests
- * Can be replaced with axios, fetch, etc.
- */
-export class ApiClient {
-    private baseURL: string;
+import axios from 'axios';
+import { getValidToken } from '@/shared/utils/tokenUtils';
 
-    constructor(baseURL: string = '') {
-        this.baseURL = baseURL;
+const rawBase = import.meta.env.VITE_API_URL as string | undefined;
+// Classifier endpoints include /api/ prefix, so strip /api from the base URL
+const BASE_URL = rawBase
+    ? rawBase.replace(/\/api\/?$/, '')
+    : 'https://survey-moesdapi.geostat.ge';
+
+const axiosInstance = axios.create({ baseURL: BASE_URL });
+
+axiosInstance.interceptors.request.use((config) => {
+    const token = getValidToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
     }
+    return config;
+});
 
-    async get<T>(endpoint: string): Promise<T> {
-        try {
-            const url = `${this.baseURL}${endpoint}`;
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache'
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            return await response.json();
-        } catch (error) {
-            console.error(`❌ API Error: ${endpoint}`, error);
-            throw error;
-        }
-    }
-}
-
-export const apiClient = new ApiClient(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8087');
+export const apiClient = {
+    get: <T>(endpoint: string) => axiosInstance.get<T>(endpoint),
+};

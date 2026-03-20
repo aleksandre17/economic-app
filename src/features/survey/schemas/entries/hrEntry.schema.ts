@@ -16,12 +16,12 @@ export const hrEntrySchema = z
     .object({
         id: idField,
         category: categoryField,
-        quantity2025: nonNegativeInt(100000, '2025 წლის რაოდენობა', { required: true }),
-        quantity2024: nonNegativeInt(100000, '2024 წლის რაოდენობა', { required: true }),
+        quantity2025: nonNegativeInt(10000000, '2025 წლის რაოდენობა', { required: true }),
+        quantity2024: nonNegativeInt(10000000, '2024 წლის რაოდენობა', { required: true }),
         educationLevels: z.object({
-            average: nonNegativeInt(10000, 'საშუალო განათლება', { required: true }),
-            professional: nonNegativeInt(10000, 'პროფესიონალური განათლება', { required: true }),
-            higher: nonNegativeInt(10000, 'მაღალი განათლება', { required: true }),
+            average: nonNegativeInt(10000000, 'საშუალო განათლება', { required: true }),
+            professional: nonNegativeInt(10000000, 'პროფესიონალური განათლება', { required: true }),
+            higher: nonNegativeInt(10000000, 'მაღალი განათლება', { required: true }),
         }),
         retirementNextFiveYears: nonNegativeInt(
             10000,

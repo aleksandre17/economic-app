@@ -15,13 +15,13 @@ export const vacancyEntrySchema = z
     .object({
         id: idField,
         category: categoryField,
-        totalVacancies: nonNegativeInt(10000, 'საერთო ვაკანსიები', { required: true, min: 1 }),
-        announcedVacancies: nonNegativeInt(10000, 'გამოცხადებული ვაკანსიები', { required: true, min: 0 }),
-        unfilledVacancies: nonNegativeInt(10000, 'შეუვსებელი ვაკანსიები', { required: true, min: 0 }),
+        totalVacancies: nonNegativeInt(10000000, 'საერთო ვაკანსიები', { required: true, min: 1 }),
+        announcedVacancies: nonNegativeInt(10000000, 'გამოცხადებული ვაკანსიები', { required: true, min: 0 }),
+        unfilledVacancies: nonNegativeInt(10000000, 'შეუვსებელი ვაკანსიები', { required: true, min: 0 }),
         employmentDuration: z.object({
-            underSixMonths: nonNegativeInt(10000, '6 თვემდე', { required: true, min: 0 }),
-            fromSixMonthsToOneYear: nonNegativeInt(10000, '6 თვიდან 1 წლამდე', { required: true, min: 0 }),
-            overOneYear: nonNegativeInt(10000, '1 წელზე მეტი', { required: true, min: 0 }),
+            underSixMonths: nonNegativeInt(10000000, '6 თვემდე', { required: true, min: 0 }),
+            fromSixMonthsToOneYear: nonNegativeInt(10000000, '6 თვიდან 1 წლამდე', { required: true, min: 0 }),
+            overOneYear: nonNegativeInt(10000000, '1 წელზე მეტი', { required: true, min: 0 }),
         }),
     })
     .superRefine((data, ctx) => {

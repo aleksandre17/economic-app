@@ -7,8 +7,8 @@ import styles from './LoginForm.module.css';
 
 export const LoginForm: React.FC = () => {
     const { login, error, clearError} = useAuth();
-    const [email, setEmail] = useState('ghambarashvilialeqsi@gmail.com');
-    const [password, setPassword] = useState('9680836');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,9 +45,9 @@ export const LoginForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setErrors('');
-        setIsSubmitting(true);
+        setErrors({});
         if (!validate()) return;
+        setIsSubmitting(true);
 
         try {
             console.log('🔐 Attempting login...');
@@ -66,7 +66,7 @@ export const LoginForm: React.FC = () => {
             }
         } catch (err: any) {
             console.error('❌ Login error:', err);
-            setErrors(err.message || 'An error occurred during login');
+            setErrors({ general: err.message || 'An error occurred during login' });
         } finally {
             setIsSubmitting(false);
         }
